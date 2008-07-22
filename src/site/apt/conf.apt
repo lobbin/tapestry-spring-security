@@ -1,0 +1,156 @@
+ -----
+ Configuring
+ -----
+ Robin Helgelin
+ -----
+
+Configuring tapestry5-acegi
+
+  Configuring your project to use tapestry5-acegi is almost as simple as dropping the jar in your projects classpath. You
+  can always look at the {{{http://www.localhost.nu/svn/public/tapestry5-acegi-example}example application}} to see how
+  things are solved there.
+
+* pom.xml
+
+  Currently tapestry5-acegi uses maven for dependencies. Configurating your project to use tapestry5-acegi is a small task,
+  just add the following to your project.
+  
+  Under \<dependencies\>, add:
+  
++----+
+  <dependency>
+    <groupId>nu.localhost.tapestry</groupId>
+    <artifactId>tapestry5-acegi</artifactId>
+    <version>1.0.1</version>
+  </dependency>
++----+
+
+  Under \<repositories\>, add:
+  
++----+
+  <repository>
+    <id>localhost.nu</id>
+    <url>http://www.localhost.nu/java/mvn</url>
+  </repository>
++----+
+
+* Configuration overrides
+
+  All configuration symbols provided by tapestry5-acegi can be overriden using the usual Tapestry methods.
+  
+  In this example we change the default password encoder and the url called when we failed to login.
+  
++----+
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("acegi.failure.url", "/loginpage/failed");
+        configuration.add("acegi.password.encoder", "org.acegisecurity.providers.encoding.Md5PasswordEncoder");
+    }
++----+
+
+  We also need some sort of authentication provider, most likely you will be using daoAuthenticationManager which can be
+  used like this.
+  
++----+
+    public static void bind(ServiceBinder binder) {
+        binder.bind(UserDetailsService.class, UserDetailsServiceImpl.class);
+    }
+    
+    public static UserDetailsService buildUserDetailsService(
+            Session session) {
+        return new UserDetailsServiceImpl(session);
+    }
+    
+    public static void contributeProviderManager(
+            OrderedConfiguration<AuthenticationProvider> configuration,
+            @InjectService("DaoAuthenticationProvider")
+            AuthenticationProvider daoAuthenticationProvider) {
+        configuration.add("daoAuthenticationProvider", daoAuthenticationProvider);
+    }
++----+
+
+* Alias contributions
+
+  This is from my test application AppModule.java where SaltSourceImpl is a quick class that simply extends
+  SystemWideSaltSource. It also shows how to override the default AuthenticationProcessingFilter. All together, this shows
+  how to easily override the default services used internally in tapestry5-acegi.
+
++----+
+    public static void bind(ServiceBinder binder) {
+        binder.bind(SaltSourceService.class, SaltSourceImpl.class).withId("MySaltSource");
+    }
+    
+    public static SaltSourceService buildMySaltSource() throws Exception {
+        SaltSourceImpl saltSource = new SaltSourceImpl();
+        saltSource.setSystemWideSalt("BBEEF");
+        saltSource.afterPropertiesSet();
+        return saltSource;
+    }
+    
+    public static AuthenticationProcessingFilter buildMyAuthenticationProcessingFilter(
+	        @AcegiServices final AuthenticationManager manager,
+	        @AcegiServices final RememberMeServices rememberMeServices,
+	        @Inject @Value("${acegi.check.url}") final String authUrl,
+	        @Inject @Value("${acegi.target.url}") final String targetUrl,
+	        @Inject @Value("${acegi.failure.url}") final String failureUrl)
+    throws Exception {
+        AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
+        filter.setAuthenticationManager(manager);
+        filter.setAuthenticationFailureUrl(failureUrl);
+        filter.setDefaultTargetUrl(targetUrl);
+        filter.setFilterProcessesUrl(authUrl);
+        filter.setRememberMeServices(rememberMeServices);
+        filter.afterPropertiesSet();
+        return filter;
+    }
+    
+    public static void contributeAliasOverrides(
+	    	@InjectService("MySaltSource")
+	    	SaltSourceService saltSource,
+	    	@InjectService("MyAuthenticationProcessingFilter")
+	    	AuthenticationProcessingFilter authenticationProcessingFilter,
+	        Configuration<AliasContribution> configuration) {
+        configuration.add(AliasContribution.create(SaltSourceService.class,
+        	saltSource));
+        configuration.add(AliasContribution.create(AuthenticationProcessingFilter.class,
+        	authenticationProcessingFilter));
+    }    
++----+
+
+* Configuration Symbols
+
+  [acegi.check.url]
+  	The internal check url used by Acegi, Defaults to "/j_acegi_security_check".
+  
+  [acegi.failure.url]
+  	Url redirected to when fails to login. Defaults to "/loginfailed".
+  
+  [acegi.target.url]
+  	Url redirected to after a successful url if there is no "secured url" stored on session. Defaults to "/".
+  
+  [acegi.afterlogout.url]
+  	Url redirected to after a successful logout. Defaults to "/".
+  	
+  [acegi.accessDenied.url]
+    Defaults to "". If set to other than empty, the request dispatcher will "forward" to this specified error page view.
+    From Acegi documentation: The error page to use. Must begin with a "/" and is interpreted relative to the current
+    context root.
+
+  [acegi.rememberme.key]
+    Key used by the remember me services. Defaults to "REMEMBERMEKEY".
+  
+  [acegi.loginform.url]
+    Url redirected to when trying to use a secured class and/or method. Defaults to "/loginpage".
+  
+  [acegi.anonymous.key]
+    Key used by the anonymous service. Defaults to "acegi_anonymous".
+  
+  [acegi.anonymous.attribute]
+  	Attributes set on anonymous users. Defaults to "anonymous,ROLE_ANONYMOUS".
+  	
+  [acegi.password.encoder]
+  	Change the default password encoder. Must implement org.acegisecurity.providers.encoding.PasswordEncoder. Defaults to
+  	"org.acegisecurity.providers.encoding.PlaintextPasswordEncoder".
+  	
+  [acegi.password.salt]
+  	Salt the password is salted with. Defaults to "DEADBEEF".

@@ -1,0 +1,11 @@
+ ---
+ Download
+ ---
+ Robin Helgelin
+ ---
+
+Availability
+
+  Currently, the library is only available from the Maven 2 repository http://www.localhost.nu/java/mvn.
+  
+  The group id is <<nu.localhost.tapestry>> and the artifact id is <<tapestry5-acegi>>.

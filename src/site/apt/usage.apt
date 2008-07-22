@@ -1,0 +1,33 @@
+ -----
+ Securing pages
+ -----
+ Robin Helgelin
+ -----
+
+Securing pages
+
+  NOTE: If you are using the default role voter from Acegi, all roles needs to begin with "ROLE_". See
+  {{{http://www.acegisecurity.org/acegi-security/apidocs/org/acegisecurity/vote/RoleVoter.html}Acegi documenation}} for more
+  information.
+
+  In order to secure a page, all you have to do is annotate the page class with the Acegi @Secured
+  annotation:
+
++----+
+@Secured("ROLE_ADMIN")
+public class AdminPage
+{
+}
++----+
+
+Secure Listener Methods
+
+  In order to secure a listener method, all you have to do is annotate the listener method with the
+  Acegi @Secured annotation:
+
++----+
+@Secured("ROLE_ADMIN")
+public void doSomeAdminTask()
+{
+}
++----+

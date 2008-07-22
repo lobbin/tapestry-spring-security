@@ -1,0 +1,19 @@
+ -----
+ TODO
+ -----
+ Robin Helgelin
+ -----
+
+Todo list
+
+  Things that needs to be taken care of :-).
+  
+    * Secured class still allows access to action methods
+    
+    * Write tests
+    
+    * Thread safety on our FilterWrappers?
+    
+    * Add components that will make life easier
+    
+    	* ?

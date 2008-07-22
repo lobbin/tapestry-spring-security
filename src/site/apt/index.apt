@@ -1,0 +1,33 @@
+ -----
+ tapestry5-acegi
+ -----
+ Robin Helgelin
+ -----
+
+Description
+
+  This library is an extension to {{{http://tapestry.apache.org/tapestry5/}Tapestry 5}} that provides
+  {{{http://www.acegisecurity.org/}Acegi Security}} integration.  The tapestry5-acegi module provides
+  a number features making it easy to use Acegi Security within Tapestry.
+  
+  Parts of this website is borrowed from James Carman's {{{http://www.carmanconsulting.com/tapestry-acegi}tapestry-acegi}}
+  website.
+  
+News
+
+  * 2008-05-23: Release <<1.1.0>> is now available. Initial support for secure methods. Add supports for overriding the
+    AuthenticationProcessingFilter and fixes a few bugs.
+
+  * 2008-02-15: Release <<1.0.3>> is now available. This is not just a release for staying up to date with the latest
+    {{{http://tapestry.apache.org/tapestry5}Tapestry}} <<5.0.10>> release. This release also adds a few @Marker annotations
+    to work better together with {{{http://tapestry.apache.org/tapestry5/tapestry-spring}tapestry-spring}}, and also adds
+    support for Acegi access denied URL.
+
+  * 2007-10-26: Release <<1.0.2>> is now available. This is a service release for staying up to date with the latest
+    {{{http://tapestry.apache.org/tapestry5}Tapestry}} <<5.0.6>> release.
+
+  * 2007-08-29: Release <<1.0.1>> is now available. News are two new components. See
+    {{{component-parameters.html}component page}} for more information.
+    
+  * 2007-08-15: Release <<1.0.0>> is now available from the Maven repository. See the {{{download.html}download}} page for
+    more information.
