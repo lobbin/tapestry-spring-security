@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
 /**
  * Basic service implementation.
  * 
  * @author Robin Helgelin
  */
-import nu.localhost.tapestry.acegi.services.SaltSourceService;
 
-import org.acegisecurity.providers.dao.salt.SystemWideSaltSource;
+import nu.localhost.tapestry5.springsecurity.services.SaltSourceService;
+
+import org.springframework.security.providers.dao.salt.SystemWideSaltSource;
 
 public class SaltSourceImpl extends SystemWideSaltSource implements SaltSourceService {
     

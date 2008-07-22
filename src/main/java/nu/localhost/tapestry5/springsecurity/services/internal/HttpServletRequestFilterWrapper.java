@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.io.IOException;
 

@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nu.localhost.tapestry</groupId>
-	<artifactId>tapestry5-acegi</artifactId>
+	<artifactId>tapestry-spring-security</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.1-SNAPSHOT</version>
-	<name>Security services (Acegi based) for Tapestry</name>
+	<version>2.0.0-SNAPSHOT</version>
+	<name>Spring Security services for Tapestry</name>
 	<inceptionYear>2007</inceptionYear>
-	<url>http://www.localhost.nu/java/tapestry5-acegi</url>
+	<url>http://www.localhost.nu/java/tapestry-spring-security</url>
 	
 	<organization>
 		<name>Robin Helgelin</name>
@@ -23,8 +23,8 @@
 	</licenses>
 	
 	<scm>
-		<connection>scm:svn:http://www.localhost.nu/svn/public/tapestry5-acegi</connection>
-		<url>http://www.localhost.nu/svn/public/tapestry5-acegi</url>
+		<connection>scm:svn:http://www.localhost.nu/svn/public/tapestry-spring-security</connection>
+		<url>http://www.localhost.nu/svn/public/tapestry-spring-security</url>
 	</scm>
 	
 	<developers>
@@ -55,37 +55,18 @@
 			<version>${tapestry-release-version}</version>
 		</dependency>
 		
-		<!-- Acegi dependencies -->
+		<!-- Spring security -->
 		<dependency>
-			<groupId>org.acegisecurity</groupId>
-			<artifactId>acegi-security</artifactId>
-			<version>${acegi-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-remoting</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-jdbc</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-support</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- Instead of spring-remoting -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-release-version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-security-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.acegisecurity</groupId>
-			<artifactId>acegi-security-tiger</artifactId>
-			<version>${acegi-release-version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core-tiger</artifactId>
+			<version>${spring-security-version}</version>
 		</dependency>
+        
 		<!-- Servlets API -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -102,7 +83,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>tapestry5-acegi</finalName>
+		<finalName>tapestry5-springsecurity</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,7 +102,7 @@
 						<compress>true</compress>
 						<index>true</index>
 						<manifestEntries>
-							<Tapestry-Module-Classes>nu.localhost.tapestry.acegi.services.SecurityModule</Tapestry-Module-Classes>
+							<Tapestry-Module-Classes>nu.localhost.tapestry5.springsecurity.services.SecurityModule</Tapestry-Module-Classes>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -154,7 +135,7 @@
 					</execution>
 				</executions>
 			</plugin>
-        </plugins>
+		</plugins>
 	
 		<extensions>
 			<extension>
@@ -173,7 +154,7 @@
 				<artifactId>tapestry-component-report</artifactId>
 				<version>${tapestry-release-version}</version>
 				<configuration>
-					<rootPackage>nu.localhost.tapestry.acegi</rootPackage>
+					<rootPackage>nu.localhost.tapestry5.springsecurity</rootPackage>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -185,9 +166,8 @@
 						<link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
 						<link>http://java.sun.com/j2ee/1.4/docs/api/</link>
 						<link>http://commons.apache.org/logging/apidocs/</link>
-						<link>http://www.acegisecurity.org/multiproject/acegi-security/apidocs/</link>
-						<link>http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/</link>
-						<link>http://tapestry.apache.org/tapestry5/tapestry-ioc/apidocs/</link>
+						<link>http://static.springframework.org/spring-security/site/apidocs/</link>
+						<link>http://tapestry.apache.org/tapestry5/apidocs/</link>
 					</links>
 				</configuration>
 			</plugin>
@@ -262,22 +242,22 @@
 
 	<distributionManagement>
 		<site>
-			<id>tapestry5.acegi.site</id>
-			<url>ftp://surr.localhost.nu/www.localhost.nu/java/tapestry5-acegi</url>
+			<id>tapestry.spring.security.site</id>
+			<url>ftp://surr.localhost.nu/www.localhost.nu/java/tapestry-spring-security</url>
 		</site>
 		<repository>
-			<id>tapestry5.acegi</id>
+			<id>tapestry.spring.security</id>
 			<url>ftp://surr.localhost.nu/www.localhost.nu/java/mvn</url>
 		</repository>
 		<snapshotRepository>
-			<id>tapestry5.acegi.snapshot</id>
+			<id>tapestry.spring.security.snapshot</id>
 			<url>ftp://surr.localhost.nu/www.localhost.nu/java/mvn-snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 
 	<properties>
-		<tapestry-release-version>5.0.12-SNAPSHOT</tapestry-release-version>
-		<acegi-release-version>1.0.6</acegi-release-version>
+		<tapestry-release-version>5.0.13</tapestry-release-version>
+		<spring-security-version>2.0.3</spring-security-version>
 		<spring-release-version>2.0.7</spring-release-version>
 		<cobertura-plugin-version>2.1</cobertura-plugin-version>
 		<testng-release-version>5.1</testng-release-version>

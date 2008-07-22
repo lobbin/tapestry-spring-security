@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.components;
+package nu.localhost.tapestry5.springsecurity.components;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,12 +24,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
 /**
@@ -153,11 +153,11 @@ public class IfRole {
      * <strong>CAVEAT</strong>: This method <strong>will not</strong> work if
      * the granted authorities returns a <code>null</code> string as the
      * return value of {@link
-     * org.acegisecurity.GrantedAuthority#getAuthority()}.
+     * org.springframework.security.GrantedAuthority#getAuthority()}.
      * </p>
      * 
      * <p>
-     * Reported by rawdave, on Fri Feb 04, 2005 2:11 pm in the Acegi Security
+     * Reported by rawdave, on Fri Feb 04, 2005 2:11 pm in the Spring Security
      * System for Spring forums.
      * </p>
      * 
@@ -165,7 +165,7 @@ public class IfRole {
      *            The authorities granted by the authentication. May be any
      *            implementation of {@link GrantedAuthority} that does
      *            <strong>not</strong> return <code>null</code> from {@link
-     *            org.acegisecurity.GrantedAuthority#getAuthority()}.
+     *            org.springframework.security.GrantedAuthority#getAuthority()}.
      * @param required
      *            A {@link Set} of {@link GrantedAuthorityImpl}s that have been
      *            built using ifAny, ifAll or ifNotGranted.

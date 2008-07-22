@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.intercept.AbstractSecurityInterceptor;
-import org.acegisecurity.intercept.InterceptorStatusToken;
-import org.acegisecurity.intercept.ObjectDefinitionSource;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.intercept.AbstractSecurityInterceptor;
+import org.springframework.security.intercept.InterceptorStatusToken;
+import org.springframework.security.intercept.ObjectDefinitionSource;
 
 /**
  * Straighforward implementation of the {@link SecurityChecker}.
@@ -51,8 +51,7 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
      * @param returnedObject object returned by the secured method.
      * @return object to return from the secured method
      */
-    public final Object checkAfter(final InterceptorStatusToken token,
-            final Object returnedObject) {
+    public final Object checkAfter(final InterceptorStatusToken token, final Object returnedObject) {
         return afterInvocation(token, returnedObject);
     }
 
@@ -60,6 +59,7 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
      * Get secured object class.
      * @return secured object class.
      */
+    @SuppressWarnings("unchecked")
     public final Class getSecureObjectClass() {
         return ConfigAttributeDefinition.class;
     }

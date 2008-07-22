@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.components;
+package nu.localhost.tapestry5.springsecurity.components;
 
 import java.security.Principal;
 

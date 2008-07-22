@@ -15,34 +15,31 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Modifier;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.SecurityConfig;
-import org.acegisecurity.annotation.Secured;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.annotation.Secured;
 
 /**
  * @author Ivan Dubrov
  */
-public class AcegiWorker implements ComponentClassTransformWorker {
+public class SpringSecurityWorker implements ComponentClassTransformWorker {
     private SecurityChecker securityChecker;
 
-    public AcegiWorker(final SecurityChecker securityChecker) {
+    public SpringSecurityWorker(final SecurityChecker securityChecker) {
         this.securityChecker = securityChecker;
     }
 
-    public final void transform(final ClassTransformation transformation,
-            final MutableComponentModel model) {
+    public final void transform(final ClassTransformation transformation, final MutableComponentModel model) {
         // Secure methods
-        for (TransformMethodSignature method : transformation
-                .findMethodsWithAnnotation(Secured.class)) {
+        for (TransformMethodSignature method : transformation .findMethodsWithAnnotation(Secured.class)) {
             transformMethod(transformation, method);
         }
 
@@ -53,20 +50,16 @@ public class AcegiWorker implements ComponentClassTransformWorker {
         }
     }
 
-    private void transformPage(final ClassTransformation transformation,
-            final Secured annotation) {
+    private void transformPage(final ClassTransformation transformation, final Secured annotation) {
         // Security checker
-        final String interField = transformation.addInjectedField(
-                SecurityChecker.class, "_$checker", securityChecker);
+        final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
 
         // Attribute definition
-        final String configField = createConfigAttributeDefinitionField(
-                transformation, annotation);
+        final String configField = createConfigAttributeDefinitionField(transformation, annotation);
 
         // Interceptor token
         final String tokenField = transformation.addField(Modifier.PRIVATE,
-                "org.acegisecurity.intercept.InterceptorStatusToken",
-                "_$token");
+                "org.springframework.security.intercept.InterceptorStatusToken", "_$token");
 
         // Extend class
         transformation.extendMethod(
@@ -85,7 +78,7 @@ public class AcegiWorker implements ComponentClassTransformWorker {
         final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
         // Interceptor status token
         final String statusToken = transformation.addField(Modifier.PRIVATE,
-                "org.acegisecurity.intercept.InterceptorStatusToken", "_$token");
+                "org.springframework.security.intercept.InterceptorStatusToken", "_$token");
 
         // Attribute definition
         final Secured annotation = transformation.getMethodAnnotation(method, Secured.class);
@@ -96,16 +89,9 @@ public class AcegiWorker implements ComponentClassTransformWorker {
         transformation.extendExistingMethod(method, interField + ".checkAfter(" + statusToken + ", null);");
     }
 
-    private String createConfigAttributeDefinitionField(
-            final ClassTransformation transformation,
-            final Secured annotation) {
-        ConfigAttributeDefinition configAttributeDefinition =
-            new ConfigAttributeDefinition();
-        for (String auth : annotation.value()) {
-            configAttributeDefinition.addConfigAttribute(
-                    new SecurityConfig(auth));
-        }
-        return transformation.addInjectedField(ConfigAttributeDefinition.class,
-                "_$configAttributeDefinition", configAttributeDefinition);
+    private String createConfigAttributeDefinitionField(final ClassTransformation transformation, final Secured annotation) {
+        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition(annotation.value());
+        return transformation.addInjectedField(ConfigAttributeDefinition.class, 
+            "_$configAttributeDefinition", configAttributeDefinition);
     }
 }

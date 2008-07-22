@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
-import java.util.Iterator;
+import java.lang.reflect.Method;
+import java.util.Collection;
 
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.intercept.method.MethodDefinitionSource;
+import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.intercept.method.MethodDefinitionSource;
 
 /**
  * Implementation of {@link MethodDefinitionSource} that simply casts security
@@ -42,7 +43,7 @@ public class StaticDefinitionSource implements MethodDefinitionSource {
      * Returns null.
      * @return null.
      */
-    public final Iterator getConfigAttributeDefinitions() {
+    public final Collection<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
         return null;
     }
 
@@ -51,7 +52,13 @@ public class StaticDefinitionSource implements MethodDefinitionSource {
      * @param clazz the class that is being queried
      * @return true if clazz is extension of {@link ConfigAttributeDefinition}.
      */
-    public final boolean supports(final Class clazz) {
+    @SuppressWarnings("unchecked")
+	public final boolean supports(final Class clazz) {
         return ConfigAttributeDefinition.class.isAssignableFrom(clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    public ConfigAttributeDefinition getAttributes(Method method, Class targetClass) {
+        return null;
     }
 }

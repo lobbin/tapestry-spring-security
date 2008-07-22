@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.util.List;
 
-import nu.localhost.tapestry.acegi.services.LogoutService;
+import nu.localhost.tapestry5.springsecurity.services.LogoutService;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.ui.logout.LogoutHandler;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.ui.logout.LogoutHandler;
 
 /**
  * @author Ivan Dubrov

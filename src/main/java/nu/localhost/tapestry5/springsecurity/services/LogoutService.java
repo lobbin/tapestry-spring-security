@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services;
+package nu.localhost.tapestry5.springsecurity.services;
 
 /**
  * @author Ivan Dubrov

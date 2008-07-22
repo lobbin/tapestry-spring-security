@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services;
+package nu.localhost.tapestry5.springsecurity.services;
 
-import org.acegisecurity.providers.dao.SaltSource;
+import org.springframework.security.providers.dao.SaltSource;
 
 /**
  * Interface used for making it easier to override the SaltSource service.

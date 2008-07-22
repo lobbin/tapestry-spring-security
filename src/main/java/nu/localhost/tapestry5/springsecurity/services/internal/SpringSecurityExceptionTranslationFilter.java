@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.io.IOException;
 
@@ -26,17 +26,17 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.AcegiSecurityException;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.InsufficientAuthenticationException;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.ui.AccessDeniedHandler;
-import org.acegisecurity.ui.AccessDeniedHandlerImpl;
-import org.acegisecurity.ui.ExceptionTranslationFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.InsufficientAuthenticationException;
+import org.springframework.security.SpringSecurityException;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.ui.AccessDeniedHandler;
+import org.springframework.security.ui.AccessDeniedHandlerImpl;
+import org.springframework.security.ui.ExceptionTranslationFilter;
 import org.springframework.util.Assert;
 
 /**
@@ -44,7 +44,7 @@ import org.springframework.util.Assert;
  * @author Colin Sampaleanu
  * @author Robin Helgelin
  */
-public class AcegiExceptionTranslationFilter
+public class SpringSecurityExceptionTranslationFilter
 extends ExceptionTranslationFilter {
     private static final Log logger = 
         LogFactory.getLog(ExceptionTranslationFilter.class);
@@ -52,7 +52,7 @@ extends ExceptionTranslationFilter {
     private AccessDeniedHandler accessDeniedHandler =
         new AccessDeniedHandlerImpl();
     
-    public void doFilter(final ServletRequest request,
+    public void doFilterHttp(final ServletRequest request,
             final ServletResponse response,
             final FilterChain chain) throws IOException, ServletException {
         if (!(request instanceof HttpServletRequest)) {
@@ -76,14 +76,14 @@ extends ExceptionTranslationFilter {
         } catch (TapestryException ex) {
             Throwable cause = getRootCause(ex);
             if (cause instanceof AuthenticationException || cause instanceof AccessDeniedException) {
-                handleException(request, response, chain, (AcegiSecurityException) cause);
+                handleException(request, response, chain, (SpringSecurityException) cause);
             } else {
                 throw ex;
             }
         } catch (ServletException ex) {
             Throwable cause = ex.getRootCause();
             if (cause instanceof AuthenticationException || cause instanceof AccessDeniedException) {
-                handleException(request, response, chain, (AcegiSecurityException) cause);
+                handleException(request, response, chain, (SpringSecurityException) cause);
             } else {
                 throw ex;
             }
@@ -101,7 +101,7 @@ extends ExceptionTranslationFilter {
     
     private void handleException(final ServletRequest request,
             final ServletResponse response,
-            final FilterChain chain, final AcegiSecurityException exception)
+            final FilterChain chain, final SpringSecurityException exception)
     throws IOException, ServletException {
         if (exception instanceof AuthenticationException) {
             if (logger.isDebugEnabled()) {

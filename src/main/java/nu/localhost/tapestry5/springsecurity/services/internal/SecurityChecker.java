@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services.internal;
+package nu.localhost.tapestry5.springsecurity.services.internal;
 
-import org.acegisecurity.intercept.InterceptorStatusToken;
+import org.springframework.security.intercept.InterceptorStatusToken;
 
 /**
  * Interface that makes few methods from
- * {@link org.acegisecurity.intercept.AbstractSecurityInterceptor} public.
+ * {@link org.springframework.security.intercept.AbstractSecurityInterceptor} public.
  * @author Ivan Dubrov
  */
 public interface SecurityChecker {

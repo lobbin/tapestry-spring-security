@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nu.localhost.tapestry.acegi.services;
+package nu.localhost.tapestry5.springsecurity.services;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @Target({ PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
-public @interface AcegiServices {
+public @interface SpringSecurityServices {
 }
