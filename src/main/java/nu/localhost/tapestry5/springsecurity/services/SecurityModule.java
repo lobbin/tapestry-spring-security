@@ -358,4 +358,5 @@ public class SecurityModule {
             final Configuration<LibraryMapping> configuration) {
         configuration.add(new LibraryMapping("security", "nu.localhost.tapestry5.springsecurity"));
     }
+    
 }
