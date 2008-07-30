@@ -40,6 +40,9 @@
 		<developer>
 			<name>Ivan Dubrov</name>
 		</developer>
+		<developer>
+      <name>Michael Gerzabek</name>
+    </developer>
 	</developers>
 
 	<dependencies>
