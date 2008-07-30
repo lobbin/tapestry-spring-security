@@ -7,7 +7,7 @@
 Description
 
   This library is an extension to {{{http://tapestry.apache.org/tapestry5/}Tapestry 5}} that provides
-  {{{http://static.springframework.org/spring-security/site/} Spring Security (former Acegi Security)}} integration.  
+  {{{http://static.springframework.org/spring-security/site/} Spring Security}} (former Acegi Security) integration.  
   The tapestry-spring-security module provides a number features making it easy to use Spring Security within Tapestry.
   
   Parts of this website is borrowed from James Carman's {{{http://www.carmanconsulting.com/tapestry-acegi}tapestry-acegi}}

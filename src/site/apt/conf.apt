@@ -73,7 +73,7 @@ Configuring tapestry5-acegi
 
   This is from my test application AppModule.java where SaltSourceImpl is a quick class that simply extends
   SystemWideSaltSource. It also shows how to override the default AuthenticationProcessingFilter. All together, this shows
-  how to easily override the default services used internally in tapestry5-acegi.
+  how to easily override the default services used internally in tapestry5-spring-security.
 
 +----+
     public static void bind(ServiceBinder binder) {
