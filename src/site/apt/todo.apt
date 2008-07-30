@@ -8,12 +8,15 @@ Todo list
 
   Things that needs to be taken care of :-).
   
-    * Secured class still allows access to action methods
-    
     * Write tests
     
     * Thread safety on our FilterWrappers?
     
     * Add components that will make life easier
     
-    	* ?
+    	* component to show user data
+    	
+    	* component to show which Authority is required for a requested page/ method. Useful 
+    	  in a forbidden page. 
+    	
+    	* What else? 

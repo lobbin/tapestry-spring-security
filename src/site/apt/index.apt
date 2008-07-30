@@ -7,13 +7,16 @@
 Description
 
   This library is an extension to {{{http://tapestry.apache.org/tapestry5/}Tapestry 5}} that provides
-  {{{http://www.acegisecurity.org/}Acegi Security}} integration.  The tapestry5-acegi module provides
-  a number features making it easy to use Acegi Security within Tapestry.
+  {{{http://static.springframework.org/spring-security/site/} Spring Security (former Acegi Security)}} integration.  
+  The tapestry-spring-security module provides a number features making it easy to use Spring Security within Tapestry.
   
   Parts of this website is borrowed from James Carman's {{{http://www.carmanconsulting.com/tapestry-acegi}tapestry-acegi}}
   website.
   
 News
+
+  * 2008-07-30: Release <<2.0.0>> is now available. New AccessDeniedHandler allows tapestry to serve a forbidden page.
+    Now static resources can be secured. 
 
   * 2008-05-23: Release <<1.1.0>> is now available. Initial support for secure methods. Add supports for overriding the
     AuthenticationProcessingFilter and fixes a few bugs.
