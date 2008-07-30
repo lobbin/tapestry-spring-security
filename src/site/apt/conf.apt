@@ -7,12 +7,12 @@
 Configuring tapestry5-acegi
 
   Configuring your project to use tapestry5-acegi is almost as simple as dropping the jar in your projects classpath. You
-  can always look at the {{{http://www.localhost.nu/svn/public/tapestry5-acegi-example}example application}} to see how
+  can always look at the {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample}example application}} to see how
   things are solved there.
 
 * pom.xml
 
-  Currently tapestry5-acegi uses maven for dependencies. Configurating your project to use tapestry5-acegi is a small task,
+  Currently tapestry5-springsecurity uses maven for dependencies. Configurating your project to use tapestry5-springsecurity is a small task,
   just add the following to your project.
   
   Under \<dependencies\>, add:
@@ -20,8 +20,8 @@ Configuring tapestry5-acegi
 +----+
   <dependency>
     <groupId>nu.localhost.tapestry</groupId>
-    <artifactId>tapestry5-acegi</artifactId>
-    <version>1.0.1</version>
+    <artifactId>tapestry-spring-security</artifactId>
+    <version>2.0.0</version>
   </dependency>
 +----+
 
@@ -36,15 +36,15 @@ Configuring tapestry5-acegi
 
 * Configuration overrides
 
-  All configuration symbols provided by tapestry5-acegi can be overriden using the usual Tapestry methods.
+  All configuration symbols provided by tapestry5-springsecurity can be overriden using the usual Tapestry methods.
   
   In this example we change the default password encoder and the url called when we failed to login.
   
 +----+
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add("acegi.failure.url", "/loginpage/failed");
-        configuration.add("acegi.password.encoder", "org.acegisecurity.providers.encoding.Md5PasswordEncoder");
+        configuration.add("spring-security.failure.url", "/loginpage/failed");
+        configuration.add("spring-security.password.encoder", "org.acegisecurity.providers.encoding.Md5PasswordEncoder");
     }
 +----+
 
@@ -90,9 +90,9 @@ Configuring tapestry5-acegi
     public static AuthenticationProcessingFilter buildMyAuthenticationProcessingFilter(
 	        @AcegiServices final AuthenticationManager manager,
 	        @AcegiServices final RememberMeServices rememberMeServices,
-	        @Inject @Value("${acegi.check.url}") final String authUrl,
-	        @Inject @Value("${acegi.target.url}") final String targetUrl,
-	        @Inject @Value("${acegi.failure.url}") final String failureUrl)
+	        @Inject @Value("${spring-security.check.url}") final String authUrl,
+	        @Inject @Value("${spring-security.target.url}") final String targetUrl,
+	        @Inject @Value("${spring-security.failure.url}") final String failureUrl)
     throws Exception {
         AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
         filter.setAuthenticationManager(manager);
@@ -119,38 +119,41 @@ Configuring tapestry5-acegi
 
 * Configuration Symbols
 
-  [acegi.check.url]
-  	The internal check url used by Acegi, Defaults to "/j_acegi_security_check".
+  [spring-security.check.url]
+  	The internal check url used by Spring Security, Defaults to "/j_acegi_security_check".
   
-  [acegi.failure.url]
+  [spring-security.failure.url]
   	Url redirected to when fails to login. Defaults to "/loginfailed".
   
-  [acegi.target.url]
+  [spring-security.target.url]
   	Url redirected to after a successful url if there is no "secured url" stored on session. Defaults to "/".
   
-  [acegi.afterlogout.url]
+  [spring-security.afterlogout.url]
   	Url redirected to after a successful logout. Defaults to "/".
   	
-  [acegi.accessDenied.url]
+  [spring-security.accessDenied.url]
     Defaults to "". If set to other than empty, the request dispatcher will "forward" to this specified error page view.
     From Acegi documentation: The error page to use. Must begin with a "/" and is interpreted relative to the current
     context root.
 
-  [acegi.rememberme.key]
+  [spring-security.rememberme.key]
     Key used by the remember me services. Defaults to "REMEMBERMEKEY".
   
-  [acegi.loginform.url]
+  [spring-security.loginform.url]
     Url redirected to when trying to use a secured class and/or method. Defaults to "/loginpage".
   
-  [acegi.anonymous.key]
+  [spring-security.force.ssl.login]
+    Used to indicate if redirect to loginform should also switch to secure channel. 
+    
+  [spring-security.anonymous.key]
     Key used by the anonymous service. Defaults to "acegi_anonymous".
   
-  [acegi.anonymous.attribute]
+  [spring-security.anonymous.attribute]
   	Attributes set on anonymous users. Defaults to "anonymous,ROLE_ANONYMOUS".
   	
-  [acegi.password.encoder]
+  [spring-security.password.encoder]
   	Change the default password encoder. Must implement org.acegisecurity.providers.encoding.PasswordEncoder. Defaults to
   	"org.acegisecurity.providers.encoding.PlaintextPasswordEncoder".
   	
-  [acegi.password.salt]
+  [spring-security.password.salt]
   	Salt the password is salted with. Defaults to "DEADBEEF".
