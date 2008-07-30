@@ -24,19 +24,21 @@ import org.springframework.security.intercept.ObjectDefinitionSource;
 
 /**
  * Straighforward implementation of the {@link SecurityChecker}.
+ * 
  * @author Ivan Dubrov
  */
 public class StaticSecurityChecker extends AbstractSecurityInterceptor
-    implements SecurityChecker {
+        implements SecurityChecker {
 
     /** Object definition source. */
-    private ObjectDefinitionSource objectDefinitionSource =
-        new StaticDefinitionSource();
+    private ObjectDefinitionSource objectDefinitionSource = new StaticDefinitionSource();
 
     /**
      * Delegate to the
      * {@link AbstractSecurityInterceptor#beforeInvocation(Object)}.
-     * @param object security object.
+     * 
+     * @param object
+     *            security object.
      * @return interceptor status token
      */
     public final InterceptorStatusToken checkBefore(final Object object) {
@@ -45,18 +47,23 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
 
     /**
      * Delegate to the
-     * {@link AbstractSecurityInterceptor#afterInvocation(InterceptorStatusToken
-     * , Object)}.
-     * @param token security token.
-     * @param returnedObject object returned by the secured method.
+     * {@link AbstractSecurityInterceptor#afterInvocation(InterceptorStatusToken ,
+     * Object)}.
+     * 
+     * @param token
+     *            security token.
+     * @param returnedObject
+     *            object returned by the secured method.
      * @return object to return from the secured method
      */
-    public final Object checkAfter(final InterceptorStatusToken token, final Object returnedObject) {
+    public final Object checkAfter(final InterceptorStatusToken token,
+            final Object returnedObject) {
         return afterInvocation(token, returnedObject);
     }
 
     /**
      * Get secured object class.
+     * 
      * @return secured object class.
      */
     @SuppressWarnings("unchecked")
@@ -66,9 +73,11 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
 
     /**
      * Obtain {@link ObjectDefinitionSource}.
+     * 
      * @return {@link ObjectDefinitionSource}.
      */
     public final ObjectDefinitionSource obtainObjectDefinitionSource() {
         return objectDefinitionSource;
     }
+    
 }

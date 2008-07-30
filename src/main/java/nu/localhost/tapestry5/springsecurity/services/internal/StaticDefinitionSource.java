@@ -26,13 +26,16 @@ import org.springframework.security.intercept.method.MethodDefinitionSource;
 /**
  * Implementation of {@link MethodDefinitionSource} that simply casts security
  * object to the {@link ConfigAttributeDefinition}.
+ * 
  * @author Ivan Dubrov
  */
 public class StaticDefinitionSource implements MethodDefinitionSource {
     /**
      * This implementation simply casts security object to the
      * {@link ConfigAttributeDefinition}.
-     * @param object security object
+     * 
+     * @param object
+     *            security object
      * @return security object casted to {@link ConfigAttributeDefinition}.
      */
     public final ConfigAttributeDefinition getAttributes(final Object object) {
@@ -41,6 +44,7 @@ public class StaticDefinitionSource implements MethodDefinitionSource {
 
     /**
      * Returns null.
+     * 
      * @return null.
      */
     public final Collection<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
@@ -49,16 +53,19 @@ public class StaticDefinitionSource implements MethodDefinitionSource {
 
     /**
      * Returns true if clazz is extension of {@link ConfigAttributeDefinition}.
-     * @param clazz the class that is being queried
+     * 
+     * @param clazz
+     *            the class that is being queried
      * @return true if clazz is extension of {@link ConfigAttributeDefinition}.
      */
     @SuppressWarnings("unchecked")
-	public final boolean supports(final Class clazz) {
+    public final boolean supports(final Class clazz) {
         return ConfigAttributeDefinition.class.isAssignableFrom(clazz);
     }
 
     @SuppressWarnings("unchecked")
-    public ConfigAttributeDefinition getAttributes(Method method, Class targetClass) {
+    public ConfigAttributeDefinition getAttributes(Method method,
+            Class targetClass) {
         return null;
     }
 }

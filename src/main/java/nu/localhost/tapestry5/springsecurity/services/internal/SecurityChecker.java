@@ -21,21 +21,28 @@ import org.springframework.security.intercept.InterceptorStatusToken;
 
 /**
  * Interface that makes few methods from
- * {@link org.springframework.security.intercept.AbstractSecurityInterceptor} public.
+ * {@link org.springframework.security.intercept.AbstractSecurityInterceptor}
+ * public.
+ * 
  * @author Ivan Dubrov
  */
 public interface SecurityChecker {
     /**
      * Check security before calling secured method.
-     * @param object security object
+     * 
+     * @param object
+     *            security object
      * @return status token
      */
     InterceptorStatusToken checkBefore(Object object);
 
     /**
      * Check security after calling secured method.
-     * @param token status token
-     * @param returnedObject object returned by the method
+     * 
+     * @param token
+     *            status token
+     * @param returnedObject
+     *            object returned by the method
      * @return object to return from the secured method
      */
     Object checkAfter(InterceptorStatusToken token, Object returnedObject);

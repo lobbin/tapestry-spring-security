@@ -79,7 +79,6 @@ import org.springframework.security.vote.AffirmativeBased;
 import org.springframework.security.vote.RoleVoter;
 import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter;
 
-
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
  * 
@@ -90,23 +89,31 @@ import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFil
 public class SecurityModule {
     @SuppressWarnings("unchecked")
     public static void bind(final ServiceBinder binder) {
-        binder.bind(LogoutService.class, LogoutServiceImpl.class).withMarker(SpringSecurityServices.class);
-        binder.bind(AuthenticationTrustResolver.class, AuthenticationTrustResolverImpl.class)
-            .withMarker(SpringSecurityServices.class);
+        binder.bind(LogoutService.class, LogoutServiceImpl.class).withMarker(
+                SpringSecurityServices.class);
+        binder.bind(AuthenticationTrustResolver.class,
+                AuthenticationTrustResolverImpl.class).withMarker(
+                SpringSecurityServices.class);
     }
-    
-    public static void contributeAlias(@SpringSecurityServices SaltSourceService saltSource,
-            @SpringSecurityServices AuthenticationProcessingFilter authenticationProcessingFilter,
+
+    public static void contributeAlias(@SpringSecurityServices
+    SaltSourceService saltSource, @SpringSecurityServices
+    AuthenticationProcessingFilter authenticationProcessingFilter,
             Configuration<AliasContribution<?>> configuration) {
-        configuration.add(AliasContribution.create(SaltSourceService.class, saltSource));
-        configuration.add(AliasContribution.create(AuthenticationProcessingFilter.class, authenticationProcessingFilter));
+        configuration.add(AliasContribution.create(SaltSourceService.class,
+                saltSource));
+        configuration.add(AliasContribution.create(
+                AuthenticationProcessingFilter.class,
+                authenticationProcessingFilter));
     }
-    
+
     @Marker(SpringSecurityServices.class)
-    public static PasswordEncoder buildPasswordEncoder(
-            @Inject @Value("${spring-security.password.encoder}") final String passwordEncoder) {
+    public static PasswordEncoder buildPasswordEncoder(@Inject
+    @Value("${spring-security.password.encoder}")
+    final String passwordEncoder) {
         try {
-            return (PasswordEncoder) Class.forName(passwordEncoder).newInstance();
+            return (PasswordEncoder) Class.forName(passwordEncoder)
+                    .newInstance();
         } catch (ClassNotFoundException ex) {
             throw new IllegalArgumentException(ex);
         } catch (IllegalAccessException ex) {
@@ -115,18 +122,21 @@ public class SecurityModule {
             throw new IllegalArgumentException(ex);
         }
     }
-    
+
     @Marker(SpringSecurityServices.class)
-    public static SaltSourceService buildSaltSource(@Inject @Value("${spring-security.password.salt}") final String salt)
-        throws Exception {
+    public static SaltSourceService buildSaltSource(@Inject
+    @Value("${spring-security.password.salt}")
+    final String salt) throws Exception {
         SaltSourceImpl saltSource = new SaltSourceImpl();
         saltSource.setSystemWideSalt(salt);
         saltSource.afterPropertiesSet();
         return saltSource;
     }
-    
-    public static void contributeFactoryDefaults(final MappedConfiguration<String, String> configuration) {
-        configuration.add("spring-security.check.url", "/j_spring_security_check");
+
+    public static void contributeFactoryDefaults(
+            final MappedConfiguration<String, String> configuration) {
+        configuration.add("spring-security.check.url",
+                "/j_spring_security_check");
         configuration.add("spring-security.failure.url", "/loginfailed");
         configuration.add("spring-security.target.url", "/");
         configuration.add("spring-security.afterlogout.url", "/");
@@ -135,71 +145,98 @@ public class SecurityModule {
         configuration.add("spring-security.rememberme.key", "REMEMBERMEKEY");
         configuration.add("spring-security.loginform.url", "/loginpage");
         configuration.add("spring-security.anonymous.key", "spring_anonymous");
-        configuration.add("spring-security.anonymous.attribute", "anonymous,ROLE_ANONYMOUS");
-        configuration.add("spring-security.password.encoder", "org.springframework.security.providers.encoding.PlaintextPasswordEncoder");
+        configuration.add("spring-security.anonymous.attribute",
+                "anonymous,ROLE_ANONYMOUS");
+        configuration
+                .add("spring-security.password.encoder",
+                        "org.springframework.security.providers.encoding.PlaintextPasswordEncoder");
         configuration.add("spring-security.password.salt", "DEADBEEF");
     }
-    
-    public static void contributeComponentClassTransformWorker(
-            OrderedConfiguration<ComponentClassTransformWorker> configuration, SecurityChecker securityChecker) {
-        configuration.add("SpringSecurity", new SpringSecurityWorker(securityChecker));
-    }
-    
-    public static void contributeHttpServletRequestHandler(
-          OrderedConfiguration<HttpServletRequestFilter> configuration,
-          @InjectService("HttpSessionContextIntegrationFilter") HttpServletRequestFilter httpSessionContextIntegrationFilter,
-          @InjectService("AuthenticationProcessingFilter") HttpServletRequestFilter authenticationProcessingFilter,
-          @InjectService("RememberMeProcessingFilter") HttpServletRequestFilter rememberMeProcessingFilter,
-          @InjectService("SecurityContextHolderAwareRequestFilter") HttpServletRequestFilter securityContextHolderAwareRequestFilter,
-          @InjectService("AnonymousProcessingFilter") HttpServletRequestFilter anonymousProcessingFilter,
-          @InjectService("FilterSecurityInterceptor") HttpServletRequestFilter filterSecurityInterceptor,
-          @InjectService("SpringSecurityExceptionFilter") SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter) {
 
-        configuration.add("springSecurityHttpSessionContextIntegrationFilter", httpSessionContextIntegrationFilter, "before:springSecurity*");
-        configuration.add("springSecurityAuthenticationProcessingFilter", authenticationProcessingFilter);
-        configuration.add("springSecurityRememberMeProcessingFilter", rememberMeProcessingFilter);
-        configuration.add("springSecuritySecurityContextHolderAwareRequestFilter", securityContextHolderAwareRequestFilter,
+    public static void contributeComponentClassTransformWorker(
+            OrderedConfiguration<ComponentClassTransformWorker> configuration,
+            SecurityChecker securityChecker) {
+        configuration.add("SpringSecurity", new SpringSecurityWorker(
+                securityChecker));
+    }
+
+    public static void contributeHttpServletRequestHandler(
+            OrderedConfiguration<HttpServletRequestFilter> configuration,
+            @InjectService("HttpSessionContextIntegrationFilter")
+            HttpServletRequestFilter httpSessionContextIntegrationFilter,
+            @InjectService("AuthenticationProcessingFilter")
+            HttpServletRequestFilter authenticationProcessingFilter,
+            @InjectService("RememberMeProcessingFilter")
+            HttpServletRequestFilter rememberMeProcessingFilter,
+            @InjectService("SecurityContextHolderAwareRequestFilter")
+            HttpServletRequestFilter securityContextHolderAwareRequestFilter,
+            @InjectService("AnonymousProcessingFilter")
+            HttpServletRequestFilter anonymousProcessingFilter,
+            @InjectService("FilterSecurityInterceptor")
+            HttpServletRequestFilter filterSecurityInterceptor,
+            @InjectService("SpringSecurityExceptionFilter")
+            SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter) {
+
+        configuration.add("springSecurityHttpSessionContextIntegrationFilter",
+                httpSessionContextIntegrationFilter, "before:springSecurity*");
+        configuration.add("springSecurityAuthenticationProcessingFilter",
+                authenticationProcessingFilter);
+        configuration.add("springSecurityRememberMeProcessingFilter",
+                rememberMeProcessingFilter);
+        configuration.add(
+                "springSecuritySecurityContextHolderAwareRequestFilter",
+                securityContextHolderAwareRequestFilter,
                 "after:springSecurityRememberMeProcessingFilter");
-        configuration.add("springSecurityAnonymousProcessingFilter", anonymousProcessingFilter,
+        configuration.add("springSecurityAnonymousProcessingFilter",
+                anonymousProcessingFilter,
                 "after:springSecurityRememberMeProcessingFilter",
                 "after:springSecurityAuthenticationProcessingFilter");
-        configuration.add( "springSecurityExceptionFilter", new HttpServletRequestFilterWrapper( springSecurityExceptionFilter ), "before:springSecurityFilterSecurityInterceptor" );
-        configuration.add("springSecurityFilterSecurityInterceptor", filterSecurityInterceptor, "after:springSecurity*" );
+        configuration.add("springSecurityExceptionFilter",
+                new HttpServletRequestFilterWrapper(
+                        springSecurityExceptionFilter),
+                "before:springSecurityFilterSecurityInterceptor");
+        configuration.add("springSecurityFilterSecurityInterceptor",
+                filterSecurityInterceptor, "after:springSecurity*");
     }
-    
+
     @Marker(SpringSecurityServices.class)
-    public static HttpServletRequestFilter buildFilterSecurityInterceptor( 
-            @SpringSecurityServices final AccessDecisionManager accessDecisionManager,
-            @SpringSecurityServices final AuthenticationManager manager,
-            final Collection<RequestInvocationDefinition> contributions )
-    throws Exception {
-        
+    public static HttpServletRequestFilter buildFilterSecurityInterceptor(
+            @SpringSecurityServices
+            final AccessDecisionManager accessDecisionManager,
+            @SpringSecurityServices
+            final AuthenticationManager manager,
+            final Collection<RequestInvocationDefinition> contributions)
+            throws Exception {
+
         FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
-        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = convertCollectionToLinkedHashMap( contributions );
-        DefaultFilterInvocationDefinitionSource source = new DefaultFilterInvocationDefinitionSource( new AntUrlPathMatcher( true ), requestMap );
+        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = convertCollectionToLinkedHashMap(contributions);
+        DefaultFilterInvocationDefinitionSource source = new DefaultFilterInvocationDefinitionSource(
+                new AntUrlPathMatcher(true), requestMap);
         interceptor.setAccessDecisionManager(accessDecisionManager);
-        interceptor.setAlwaysReauthenticate( false );
-        interceptor.setAuthenticationManager( manager );
-        interceptor.setObjectDefinitionSource( source );
-        interceptor.setValidateConfigAttributes( true );
+        interceptor.setAlwaysReauthenticate(false);
+        interceptor.setAuthenticationManager(manager);
+        interceptor.setObjectDefinitionSource(source);
+        interceptor.setValidateConfigAttributes(true);
         interceptor.afterPropertiesSet();
-        return new HttpServletRequestFilterWrapper( interceptor );
+        return new HttpServletRequestFilterWrapper(interceptor);
     }
-    
-    static LinkedHashMap<RequestKey, ConfigAttributeDefinition> convertCollectionToLinkedHashMap( 
-            Collection<RequestInvocationDefinition> urls ) {
-        
-        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
-        for( RequestInvocationDefinition url : urls ) {
-            
-            requestMap.put(url.getRequestKey(), url.getConfigAttributeDefinition() );
+
+    static LinkedHashMap<RequestKey, ConfigAttributeDefinition> convertCollectionToLinkedHashMap(
+            Collection<RequestInvocationDefinition> urls) {
+
+        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap 
+            = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
+        for (RequestInvocationDefinition url : urls) {
+
+            requestMap.put(url.getRequestKey(), url
+                    .getConfigAttributeDefinition());
         }
         return requestMap;
     }
-    
+
     @Marker(SpringSecurityServices.class)
     public static HttpServletRequestFilter buildHttpSessionContextIntegrationFilter()
-    throws Exception {
+            throws Exception {
         HttpSessionContextIntegrationFilter filter = new HttpSessionContextIntegrationFilter();
         filter.setContextClass(SecurityContextImpl.class);
         filter.setAllowSessionCreation(true);
@@ -207,15 +244,18 @@ public class SecurityModule {
         filter.afterPropertiesSet();
         return new HttpServletRequestFilterWrapper(filter);
     }
-    
+
     @Marker(SpringSecurityServices.class)
     public static AuthenticationProcessingFilter buildRealAuthenticationProcessingFilter(
-        @SpringSecurityServices final AuthenticationManager manager,
-        @SpringSecurityServices final RememberMeServices rememberMeServices,
-        @Inject @Value("${spring-security.check.url}") final String authUrl,
-        @Inject @Value("${spring-security.target.url}") final String targetUrl,
-        @Inject @Value("${spring-security.failure.url}") final String failureUrl)
-    throws Exception {
+            @SpringSecurityServices
+            final AuthenticationManager manager, @SpringSecurityServices
+            final RememberMeServices rememberMeServices, @Inject
+            @Value("${spring-security.check.url}")
+            final String authUrl, @Inject
+            @Value("${spring-security.target.url}")
+            final String targetUrl, @Inject
+            @Value("${spring-security.failure.url}")
+            final String failureUrl) throws Exception {
         AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
         filter.setAuthenticationManager(manager);
         filter.setAuthenticationFailureUrl(failureUrl);
@@ -224,34 +264,39 @@ public class SecurityModule {
         filter.setRememberMeServices(rememberMeServices);
         filter.afterPropertiesSet();
         return filter;
-    }    
+    }
 
     @Marker(SpringSecurityServices.class)
-    public static HttpServletRequestFilter buildAuthenticationProcessingFilter(final AuthenticationProcessingFilter filter)
-    throws Exception {
+    public static HttpServletRequestFilter buildAuthenticationProcessingFilter(
+            final AuthenticationProcessingFilter filter) throws Exception {
         return new HttpServletRequestFilterWrapper(filter);
     }
 
     @Marker(SpringSecurityServices.class)
     public static HttpServletRequestFilter buildRememberMeProcessingFilter(
-            @SpringSecurityServices final RememberMeServices rememberMe,
-            @SpringSecurityServices final AuthenticationManager authManager) throws Exception {
+            @SpringSecurityServices
+            final RememberMeServices rememberMe, @SpringSecurityServices
+            final AuthenticationManager authManager) throws Exception {
         RememberMeProcessingFilter filter = new RememberMeProcessingFilter();
         filter.setRememberMeServices(rememberMe);
         filter.setAuthenticationManager(authManager);
         filter.afterPropertiesSet();
         return new HttpServletRequestFilterWrapper(filter);
     }
-    
+
     @Marker(SpringSecurityServices.class)
     public static HttpServletRequestFilter buildSecurityContextHolderAwareRequestFilter() {
-        return new HttpServletRequestFilterWrapper(new SecurityContextHolderAwareRequestFilter());
+        return new HttpServletRequestFilterWrapper(
+                new SecurityContextHolderAwareRequestFilter());
     }
 
     @Marker(SpringSecurityServices.class)
     public static HttpServletRequestFilter buildAnonymousProcessingFilter(
-            @Inject @Value("${spring-security.anonymous.attribute}") final String anonymousAttr,
-            @Inject @Value("${spring-security.anonymous.key}") final String anonymousKey) throws Exception {
+            @Inject
+            @Value("${spring-security.anonymous.attribute}")
+            final String anonymousAttr, @Inject
+            @Value("${spring-security.anonymous.key}")
+            final String anonymousKey) throws Exception {
         AnonymousProcessingFilter filter = new AnonymousProcessingFilter();
         filter.setKey(anonymousKey);
         UserAttributeEditor attrEditor = new UserAttributeEditor();
@@ -263,8 +308,10 @@ public class SecurityModule {
     }
 
     @Marker(SpringSecurityServices.class)
-    public static RememberMeServices build(final UserDetailsService userDetailsService,
-            @Inject @Value("${spring-security.rememberme.key}") final String rememberMeKey) {
+    public static RememberMeServices build(
+            final UserDetailsService userDetailsService, @Inject
+            @Value("${spring-security.rememberme.key}")
+            final String rememberMeKey) {
         TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices();
         rememberMe.setUserDetailsService(userDetailsService);
         rememberMe.setKey(rememberMeKey);
@@ -272,8 +319,10 @@ public class SecurityModule {
     }
 
     @Marker(SpringSecurityServices.class)
-    public static LogoutHandler buildRememberMeLogoutHandler(final UserDetailsService userDetailsService,
-            @Inject @Value("${spring-security.rememberme.key}") final String rememberMeKey) throws Exception {
+    public static LogoutHandler buildRememberMeLogoutHandler(
+            final UserDetailsService userDetailsService, @Inject
+            @Value("${spring-security.rememberme.key}")
+            final String rememberMeKey) throws Exception {
         TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices();
         rememberMe.setUserDetailsService(userDetailsService);
         rememberMe.setKey(rememberMeKey);
@@ -281,15 +330,18 @@ public class SecurityModule {
         return rememberMe;
     }
 
-    public static void contributeLogoutService(final OrderedConfiguration< LogoutHandler > cfg,
-            @InjectService("RememberMeLogoutHandler") final LogoutHandler rememberMeLogoutHandler) {
-        cfg.add("securityContextLogoutHandler", new SecurityContextLogoutHandler());
+    public static void contributeLogoutService(
+            final OrderedConfiguration<LogoutHandler> cfg,
+            @InjectService("RememberMeLogoutHandler")
+            final LogoutHandler rememberMeLogoutHandler) {
+        cfg.add("securityContextLogoutHandler",
+                new SecurityContextLogoutHandler());
         cfg.add("rememberMeLogoutHandler", rememberMeLogoutHandler);
     }
 
     @Marker(SpringSecurityServices.class)
-    public static AuthenticationManager buildProviderManager(final List< AuthenticationProvider > providers)
-    throws Exception {
+    public static AuthenticationManager buildProviderManager(
+            final List<AuthenticationProvider> providers) throws Exception {
         ProviderManager manager = new ProviderManager();
         manager.setProviders(providers);
         manager.afterPropertiesSet();
@@ -298,8 +350,9 @@ public class SecurityModule {
 
     @Marker(SpringSecurityServices.class)
     public final AuthenticationProvider buildAnonymousAuthenticationProvider(
-            @Inject @Value("${spring-security.anonymous.key}") final String anonymousKey)
-    throws Exception {
+            @Inject
+            @Value("${spring-security.anonymous.key}")
+            final String anonymousKey) throws Exception {
         AnonymousAuthenticationProvider provider = new AnonymousAuthenticationProvider();
         provider.setKey(anonymousKey);
         provider.afterPropertiesSet();
@@ -308,8 +361,9 @@ public class SecurityModule {
 
     @Marker(SpringSecurityServices.class)
     public final AuthenticationProvider buildRememberMeAuthenticationProvider(
-            @Inject @Value("${spring-security.rememberme.key}") final String rememberMeKey)
-    throws Exception {
+            @Inject
+            @Value("${spring-security.rememberme.key}")
+            final String rememberMeKey) throws Exception {
         RememberMeAuthenticationProvider provider = new RememberMeAuthenticationProvider();
         provider.setKey(rememberMeKey);
         provider.afterPropertiesSet();
@@ -317,8 +371,10 @@ public class SecurityModule {
     }
 
     @Marker(SpringSecurityServices.class)
-    public final AuthenticationProvider buildDaoAuthenticationProvider(final UserDetailsService userDetailsService,
-            @SpringSecurityServices final PasswordEncoder passwordEncoder,
+    public final AuthenticationProvider buildDaoAuthenticationProvider(
+            final UserDetailsService userDetailsService,
+            @SpringSecurityServices
+            final PasswordEncoder passwordEncoder,
             final SaltSourceService saltSource) throws Exception {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
@@ -329,33 +385,35 @@ public class SecurityModule {
     }
 
     public final void contributeProviderManager(
-            final OrderedConfiguration< AuthenticationProvider > configuration,
+            final OrderedConfiguration<AuthenticationProvider> configuration,
             @InjectService("AnonymousAuthenticationProvider")
             final AuthenticationProvider anonymousAuthenticationProvider,
-            @InjectService("RememberMeAuthenticationProvider") 
+            @InjectService("RememberMeAuthenticationProvider")
             final AuthenticationProvider rememberMeAuthenticationProvider) {
-        configuration.add("anonymousAuthenticationProvider", anonymousAuthenticationProvider);
-        configuration.add("rememberMeAuthenticationProvider", rememberMeAuthenticationProvider);
+        configuration.add("anonymousAuthenticationProvider",
+                anonymousAuthenticationProvider);
+        configuration.add("rememberMeAuthenticationProvider",
+                rememberMeAuthenticationProvider);
     }
 
     @Marker(SpringSecurityServices.class)
-    public final AccessDecisionManager buildAccessDecisionManager(final List<AccessDecisionVoter> voters)
-    throws Exception {
+    public final AccessDecisionManager buildAccessDecisionManager(
+            final List<AccessDecisionVoter> voters) throws Exception {
         AffirmativeBased manager = new AffirmativeBased();
         manager.setDecisionVoters(voters);
         manager.afterPropertiesSet();
         return manager;
     }
 
-    public final void contributeAccessDecisionManager(final OrderedConfiguration< AccessDecisionVoter > configuration) {
+    public final void contributeAccessDecisionManager(
+            final OrderedConfiguration<AccessDecisionVoter> configuration) {
         configuration.add("RoleVoter", new RoleVoter());
     }
 
     @Marker(SpringSecurityServices.class)
-    public static SecurityChecker buildSecurityChecker(
-            @SpringSecurityServices final AccessDecisionManager accessDecisionManager,
-            @SpringSecurityServices final AuthenticationManager authenticationManager)
-    throws Exception {
+    public static SecurityChecker buildSecurityChecker(@SpringSecurityServices
+    final AccessDecisionManager accessDecisionManager, @SpringSecurityServices
+    final AuthenticationManager authenticationManager) throws Exception {
         StaticSecurityChecker checker = new StaticSecurityChecker();
         checker.setAccessDecisionManager(accessDecisionManager);
         checker.setAuthenticationManager(authenticationManager);
@@ -365,23 +423,25 @@ public class SecurityModule {
 
     @Marker(SpringSecurityServices.class)
     public static AuthenticationEntryPoint buildAuthenticationEntryPoint(
-            @Inject @Value("${spring-security.loginform.url}") final String loginFormUrl,
-            @Inject @Value("${spring-security.force.ssl.login}") final String forceHttps )
-    throws Exception {
-        
+            @Inject
+            @Value("${spring-security.loginform.url}")
+            final String loginFormUrl, @Inject
+            @Value("${spring-security.force.ssl.login}")
+            final String forceHttps) throws Exception {
+
         AuthenticationProcessingFilterEntryPoint entryPoint = new AuthenticationProcessingFilterEntryPoint();
         entryPoint.setLoginFormUrl(loginFormUrl);
         entryPoint.afterPropertiesSet();
-        boolean forceSSL = Boolean.parseBoolean( forceHttps );
-        entryPoint.setForceHttps( forceSSL );
+        boolean forceSSL = Boolean.parseBoolean(forceHttps);
+        entryPoint.setForceHttps(forceSSL);
         return entryPoint;
     }
 
     public static SpringSecurityExceptionTranslationFilter buildSpringSecurityExceptionFilter(
-        final AuthenticationEntryPoint aep,
-        @Inject @Value("${spring-security.accessDenied.url}") final String accessDeniedUrl ) 
-    throws Exception {
-      
+            final AuthenticationEntryPoint aep, @Inject
+            @Value("${spring-security.accessDenied.url}")
+            final String accessDeniedUrl) throws Exception {
+
         SpringSecurityExceptionTranslationFilter filter = new SpringSecurityExceptionTranslationFilter();
         filter.setAuthenticationEntryPoint(aep);
         if (!accessDeniedUrl.equals("")) {
@@ -394,18 +454,23 @@ public class SecurityModule {
     }
 
     public static void contributeRequestHandler(
-        final OrderedConfiguration<RequestFilter> configuration,
-        final RequestGlobals globals,
-        @InjectService("SpringSecurityExceptionFilter") final SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter ) {
-                                            
-        configuration.add( "SpringSecurityExceptionFilter", new RequestFilterWrapper(globals, springSecurityExceptionFilter ), "after:ErrorFilter");
+            final OrderedConfiguration<RequestFilter> configuration,
+            final RequestGlobals globals,
+            @InjectService("SpringSecurityExceptionFilter")
+            final SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter) {
+
+        configuration
+                .add("SpringSecurityExceptionFilter", new RequestFilterWrapper(
+                        globals, springSecurityExceptionFilter),
+                        "after:ErrorFilter");
     }
 
     // Contribute three aspects of module: presentation, entities and
     // configuration
     public static void contributeComponentClassResolver(
             final Configuration<LibraryMapping> configuration) {
-        configuration.add(new LibraryMapping("security", "nu.localhost.tapestry5.springsecurity"));
+        configuration.add(new LibraryMapping("security",
+                "nu.localhost.tapestry5.springsecurity"));
     }
-    
+
 }

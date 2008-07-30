@@ -44,22 +44,22 @@ public class RequestFilterWrapper implements RequestFilter {
         this.filter = filter;
     }
 
-    public final boolean service(final Request request, final Response response,
-            final RequestHandler handler) throws IOException {
+    public final boolean service(final Request request,
+            final Response response, final RequestHandler handler)
+            throws IOException {
 
         // TODO: Thread safety!
         // Assume request handled if filter chain is NOT executed
         final boolean[] res = new boolean[] {true};
         try {
-            filter.doFilter(globals.getHTTPServletRequest(),
-                    globals.getHTTPServletResponse(),
-                    new FilterChain() {
-                        public void doFilter(final ServletRequest req,
-                                final ServletResponse resp)
-                                throws IOException, ServletException {
-                            res[0] = handler.service(request, response);
-                        }
-                    });
+            filter.doFilter(globals.getHTTPServletRequest(), globals
+                    .getHTTPServletResponse(), new FilterChain() {
+                public void doFilter(final ServletRequest req,
+                        final ServletResponse resp) throws IOException,
+                        ServletException {
+                    res[0] = handler.service(request, response);
+                }
+            });
         } catch (ServletException e) {
             IOException ex = new IOException(e.getMessage());
             ex.initCause(e);

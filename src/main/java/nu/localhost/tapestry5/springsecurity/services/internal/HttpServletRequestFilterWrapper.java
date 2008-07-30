@@ -33,8 +33,8 @@ import org.apache.tapestry5.services.HttpServletRequestHandler;
 /**
  * @author Ivan Dubrov
  */
-public class HttpServletRequestFilterWrapper
-implements HttpServletRequestFilter {
+public class HttpServletRequestFilterWrapper implements
+        HttpServletRequestFilter {
     private Filter filter;
 
     public HttpServletRequestFilterWrapper(final Filter filter) {
@@ -51,8 +51,8 @@ implements HttpServletRequestFilter {
         try {
             filter.doFilter(request, response, new FilterChain() {
                 public void doFilter(final ServletRequest request,
-                        final ServletResponse response)
-                        throws IOException, ServletException {
+                        final ServletResponse response) throws IOException,
+                        ServletException {
                     res[0] = handler.service((HttpServletRequest) request,
                             (HttpServletResponse) response);
                 }

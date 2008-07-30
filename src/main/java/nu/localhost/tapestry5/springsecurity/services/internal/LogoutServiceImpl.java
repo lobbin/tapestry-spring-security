@@ -31,19 +31,21 @@ import org.springframework.security.ui.logout.LogoutHandler;
  * @author Ivan Dubrov
  */
 public class LogoutServiceImpl implements LogoutService {
-    private List< LogoutHandler > handlers;
+    private List<LogoutHandler> handlers;
     private RequestGlobals requestGlobals;
 
-    public LogoutServiceImpl(final List< LogoutHandler > handlers,
-            @Inject final RequestGlobals requestGlobals) {
+    public LogoutServiceImpl(final List<LogoutHandler> handlers, @Inject
+    final RequestGlobals requestGlobals) {
         this.handlers = handlers;
         this.requestGlobals = requestGlobals;
     }
 
     public final void logout() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext()
+                .getAuthentication();
         for (LogoutHandler handler : handlers) {
-            handler.logout(requestGlobals.getHTTPServletRequest(), requestGlobals.getHTTPServletResponse(), auth);
+            handler.logout(requestGlobals.getHTTPServletRequest(),
+                    requestGlobals.getHTTPServletResponse(), auth);
         }
     }
 }

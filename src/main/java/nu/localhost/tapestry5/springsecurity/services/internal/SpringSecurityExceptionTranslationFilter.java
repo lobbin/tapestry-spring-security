@@ -57,8 +57,9 @@ import org.springframework.util.Assert;
  */
 /*
  * Since we need this filter also in the chain of the HttpServletRequestFilters
- * I copied the ExceptionTranslationFilter from Spring and adapted it to fullfill 
- * both our T5 HttpServletRequestFilterWrapper and RequestFilterWrapper signatures.
+ * I copied the ExceptionTranslationFilter from Spring and adapted it to
+ * fullfill both our T5 HttpServletRequestFilterWrapper and RequestFilterWrapper
+ * signatures.
  */
 public class SpringSecurityExceptionTranslationFilter extends
         SpringSecurityFilter {
@@ -66,86 +67,81 @@ public class SpringSecurityExceptionTranslationFilter extends
     // ~ Instance fields
     // ================================================================================================
 
-    private AccessDeniedHandler         accessDeniedHandler         = new AccessDeniedHandlerImpl();
-    private AuthenticationEntryPoint    authenticationEntryPoint;
+    private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
+    private AuthenticationEntryPoint authenticationEntryPoint;
     private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
-    private PortResolver                portResolver                = new PortResolverImpl();
-    private ThrowableAnalyzer           throwableAnalyzer           = new DefaultThrowableAnalyzer();
-    private boolean                     createSessionAllowed        = true;
+    private PortResolver portResolver = new PortResolverImpl();
+    private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
+    private boolean createSessionAllowed = true;
 
     // ~ Methods
     // ========================================================================================================
 
     public void afterPropertiesSet() throws Exception {
 
-        Assert.notNull( authenticationEntryPoint,
-                "authenticationEntryPoint must be specified" );
-        Assert.notNull( portResolver, "portResolver must be specified" );
-        Assert.notNull( authenticationTrustResolver,
-                "authenticationTrustResolver must be specified" );
-        Assert.notNull( throwableAnalyzer,
-                "throwableAnalyzer must be specified" );
+        Assert.notNull(authenticationEntryPoint,
+                "authenticationEntryPoint must be specified");
+        Assert.notNull(portResolver, "portResolver must be specified");
+        Assert.notNull(authenticationTrustResolver,
+                "authenticationTrustResolver must be specified");
+        Assert
+                .notNull(throwableAnalyzer,
+                        "throwableAnalyzer must be specified");
     }
 
     private static final Log logger = LogFactory
-                                            .getLog( ExceptionTranslationFilter.class );
+            .getLog(ExceptionTranslationFilter.class);
 
-    public void doFilterHttp(
-                              HttpServletRequest request,
-                              HttpServletResponse response,
-                              FilterChain chain )
-        throws IOException,
-        ServletException {
+    public void doFilterHttp(HttpServletRequest request,
+            HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
         try {
-            chain.doFilter( request, response );
+            chain.doFilter(request, response);
 
-            if ( logger.isDebugEnabled() ) {
-                logger.debug( "Chain processed normally" );
+            if (logger.isDebugEnabled()) {
+                logger.debug("Chain processed normally");
             }
-        }
-        catch ( IOException ex ) {
+        } catch (IOException ex) {
             throw ex;
-        }
-        catch ( Exception ex ) {
+        } catch (Exception ex) {
             // Try to extract a SpringSecurityException from the stacktrace
             Throwable[] causeChain = this.throwableAnalyzer
-                    .determineCauseChain( ex );
+                    .determineCauseChain(ex);
             SpringSecurityException ase = (SpringSecurityException) this.throwableAnalyzer
-                    .getFirstThrowableOfType( SpringSecurityException.class,
-                            causeChain );
+                    .getFirstThrowableOfType(SpringSecurityException.class,
+                            causeChain);
 
-            if ( ase != null ) {
-                handleException( request, response, chain, ase );
-            }
-            else {
+            if (ase != null) {
+                handleException(request, response, chain, ase);
+            } else {
                 // Rethrow ServletExceptions and RuntimeExceptions as-is
-                if ( ex instanceof ServletException ) {
+                if (ex instanceof ServletException) {
                     throw (ServletException) ex;
+                } else if (ex instanceof RuntimeException) {
+                    throw (RuntimeException) ex;
                 }
-                else if ( ex instanceof RuntimeException ) { throw (RuntimeException) ex; }
 
                 // Wrap other Exceptions. These are not expected to happen
-                throw new RuntimeException( ex );
+                throw new RuntimeException(ex);
             }
         }
     }
 
-    public void doFilterHttp(
-                              final ServletRequest request,
-                              final ServletResponse response,
-                              final FilterChain chain )
-        throws IOException,
-        ServletException {
+    public void doFilterHttp(final ServletRequest request,
+            final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
 
-        if ( !( request instanceof HttpServletRequest ) ) { throw new ServletException(
-                "HttpServletRequest required" ); }
+        if (!(request instanceof HttpServletRequest)) {
+            throw new ServletException("HttpServletRequest required");
+        }
 
-        if ( !( response instanceof HttpServletResponse ) ) { throw new ServletException(
-                "HttpServletResponse required" ); }
+        if (!(response instanceof HttpServletResponse)) {
+            throw new ServletException("HttpServletResponse required");
+        }
 
-        doFilterHttp( (HttpServletRequest) request, (ServletResponse) response,
-                chain );
+        doFilterHttp((HttpServletRequest) request, (ServletResponse) response,
+                chain);
     }
 
     public AuthenticationEntryPoint getAuthenticationEntryPoint() {
@@ -163,33 +159,29 @@ public class SpringSecurityExceptionTranslationFilter extends
         return portResolver;
     }
 
-    private void handleException(
-                                  ServletRequest request,
-                                  ServletResponse response,
-                                  FilterChain chain,
-                                  SpringSecurityException exception )
-        throws IOException,
-        ServletException {
+    private void handleException(ServletRequest request,
+            ServletResponse response, FilterChain chain,
+            SpringSecurityException exception) throws IOException,
+            ServletException {
 
-        if ( exception instanceof AuthenticationException ) {
-            if ( logger.isDebugEnabled() ) {
+        if (exception instanceof AuthenticationException) {
+            if (logger.isDebugEnabled()) {
                 logger
                         .debug(
                                 "Authentication exception occurred; redirecting to authentication entry point",
-                                exception );
+                                exception);
             }
 
-            sendStartAuthentication( request, response, chain,
-                    (AuthenticationException) exception );
-        }
-        else if ( exception instanceof AccessDeniedException ) {
-            if ( authenticationTrustResolver.isAnonymous( SecurityContextHolder
-                    .getContext().getAuthentication() ) ) {
-                if ( logger.isDebugEnabled() ) {
+            sendStartAuthentication(request, response, chain,
+                    (AuthenticationException) exception);
+        } else if (exception instanceof AccessDeniedException) {
+            if (authenticationTrustResolver.isAnonymous(SecurityContextHolder
+                    .getContext().getAuthentication())) {
+                if (logger.isDebugEnabled()) {
                     logger
                             .debug(
                                     "Access is denied (user is anonymous); redirecting to authentication entry point",
-                                    exception );
+                                    exception);
                 }
 
                 sendStartAuthentication(
@@ -197,18 +189,17 @@ public class SpringSecurityExceptionTranslationFilter extends
                         response,
                         chain,
                         new InsufficientAuthenticationException(
-                                "Full authentication is required to access this resource" ) );
-            }
-            else {
-                if ( logger.isDebugEnabled() ) {
+                                "Full authentication is required to access this resource"));
+            } else {
+                if (logger.isDebugEnabled()) {
                     logger
                             .debug(
                                     "Access is denied (user is not anonymous); delegating to AccessDeniedHandler",
-                                    exception );
+                                    exception);
                 }
 
-                accessDeniedHandler.handle( request, response,
-                        (AccessDeniedException) exception );
+                accessDeniedHandler.handle(request, response,
+                        (AccessDeniedException) exception);
             }
         }
     }
@@ -234,68 +225,65 @@ public class SpringSecurityExceptionTranslationFilter extends
         return createSessionAllowed;
     }
 
-    protected void sendStartAuthentication(
-                                            ServletRequest request,
-                                            ServletResponse response,
-                                            FilterChain chain,
-                                            AuthenticationException reason )
-        throws ServletException,
-        IOException {
+    protected void sendStartAuthentication(ServletRequest request,
+            ServletResponse response, FilterChain chain,
+            AuthenticationException reason) throws ServletException,
+            IOException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        SavedRequest savedRequest = new SavedRequest( httpRequest, portResolver );
+        SavedRequest savedRequest = new SavedRequest(httpRequest, portResolver);
 
-        if ( logger.isDebugEnabled() ) {
+        if (logger.isDebugEnabled()) {
             logger
-                    .debug( "Authentication entry point being called; SavedRequest added to Session: "
-                            + savedRequest );
+                    .debug("Authentication entry point being called; SavedRequest added to Session: "
+                            + savedRequest);
         }
 
-        if ( createSessionAllowed ) {
+        if (createSessionAllowed) {
             // Store the HTTP request itself. Used by AbstractProcessingFilter
             // for redirection after successful authentication (SEC-29)
             httpRequest.getSession().setAttribute(
                     AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY,
-                    savedRequest );
+                    savedRequest);
         }
 
         // SEC-112: Clear the SecurityContextHolder's Authentication, as the
         // existing Authentication is no longer considered valid
-        SecurityContextHolder.getContext().setAuthentication( null );
+        SecurityContextHolder.getContext().setAuthentication(null);
 
-        authenticationEntryPoint.commence( httpRequest, response, reason );
+        authenticationEntryPoint.commence(httpRequest, response, reason);
     }
 
-    public void setAccessDeniedHandler( AccessDeniedHandler accessDeniedHandler ) {
+    public void setAccessDeniedHandler(AccessDeniedHandler accessDeniedHandler) {
 
-        Assert.notNull( accessDeniedHandler, "AccessDeniedHandler required" );
+        Assert.notNull(accessDeniedHandler, "AccessDeniedHandler required");
         this.accessDeniedHandler = accessDeniedHandler;
     }
 
     public void setAuthenticationEntryPoint(
-                                             AuthenticationEntryPoint authenticationEntryPoint ) {
+            AuthenticationEntryPoint authenticationEntryPoint) {
 
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     public void setAuthenticationTrustResolver(
-                                                AuthenticationTrustResolver authenticationTrustResolver ) {
+            AuthenticationTrustResolver authenticationTrustResolver) {
 
         this.authenticationTrustResolver = authenticationTrustResolver;
     }
 
-    public void setCreateSessionAllowed( boolean createSessionAllowed ) {
+    public void setCreateSessionAllowed(boolean createSessionAllowed) {
 
         this.createSessionAllowed = createSessionAllowed;
     }
 
-    public void setPortResolver( PortResolver portResolver ) {
+    public void setPortResolver(PortResolver portResolver) {
 
         this.portResolver = portResolver;
     }
 
-    public void setThrowableAnalyzer( ThrowableAnalyzer throwableAnalyzer ) {
+    public void setThrowableAnalyzer(ThrowableAnalyzer throwableAnalyzer) {
 
         this.throwableAnalyzer = throwableAnalyzer;
     }
@@ -319,17 +307,17 @@ public class SpringSecurityExceptionTranslationFilter extends
 
             super.initExtractorMap();
 
-            registerExtractor( ServletException.class,
+            registerExtractor(ServletException.class,
                     new ThrowableCauseExtractor() {
 
-                        public Throwable extractCause( Throwable throwable ) {
+                        public Throwable extractCause(Throwable throwable) {
 
                             ThrowableAnalyzer.verifyThrowableHierarchy(
-                                    throwable, ServletException.class );
-                            return ( (ServletException) throwable )
+                                    throwable, ServletException.class);
+                            return ((ServletException) throwable)
                                     .getRootCause();
                         }
-                    } );
+                    });
         }
 
     }

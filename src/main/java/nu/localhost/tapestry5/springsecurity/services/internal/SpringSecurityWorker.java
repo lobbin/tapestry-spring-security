@@ -37,9 +37,11 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         this.securityChecker = securityChecker;
     }
 
-    public final void transform(final ClassTransformation transformation, final MutableComponentModel model) {
+    public final void transform(final ClassTransformation transformation,
+            final MutableComponentModel model) {
         // Secure methods
-        for (TransformMethodSignature method : transformation .findMethodsWithAnnotation(Secured.class)) {
+        for (TransformMethodSignature method : transformation
+                .findMethodsWithAnnotation(Secured.class)) {
             transformMethod(transformation, method);
         }
 
@@ -50,48 +52,63 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         }
     }
 
-    private void transformPage(final ClassTransformation transformation, final Secured annotation) {
+    private void transformPage(final ClassTransformation transformation,
+            final Secured annotation) {
         // Security checker
-        final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
+        final String interField = transformation.addInjectedField(
+                SecurityChecker.class, "_$checker", securityChecker);
 
         // Attribute definition
-        final String configField = createConfigAttributeDefinitionField(transformation, annotation);
+        final String configField = createConfigAttributeDefinitionField(
+                transformation, annotation);
 
         // Interceptor token
-        final String tokenField = transformation.addField(Modifier.PRIVATE,
-                "org.springframework.security.intercept.InterceptorStatusToken", "_$token");
+        final String tokenField = transformation
+                .addField(
+                        Modifier.PRIVATE,
+                        "org.springframework.security.intercept.InterceptorStatusToken",
+                        "_$token");
 
         // Extend class
-        transformation.extendMethod(
-                TransformConstants.BEGIN_RENDER_SIGNATURE,
+        transformation.extendMethod(TransformConstants.BEGIN_RENDER_SIGNATURE,
                 tokenField + " = " + interField + ".checkBefore(" + configField
-                + ");");
+                        + ");");
         transformation.extendMethod(
-                TransformConstants.CLEANUP_RENDER_SIGNATURE,
-                interField + ".checkAfter(" + tokenField + ", null);");
+                TransformConstants.CLEANUP_RENDER_SIGNATURE, interField
+                        + ".checkAfter(" + tokenField + ", null);");
 
     }
 
     private void transformMethod(final ClassTransformation transformation,
             final TransformMethodSignature method) {
         // Security checker
-        final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
+        final String interField = transformation.addInjectedField(
+                SecurityChecker.class, "_$checker", securityChecker);
         // Interceptor status token
-        final String statusToken = transformation.addField(Modifier.PRIVATE,
-                "org.springframework.security.intercept.InterceptorStatusToken", "_$token");
+        final String statusToken = transformation
+                .addField(
+                        Modifier.PRIVATE,
+                        "org.springframework.security.intercept.InterceptorStatusToken",
+                        "_$token");
 
         // Attribute definition
-        final Secured annotation = transformation.getMethodAnnotation(method, Secured.class);
-        final String configField = createConfigAttributeDefinitionField(transformation, annotation);
+        final Secured annotation = transformation.getMethodAnnotation(method,
+                Secured.class);
+        final String configField = createConfigAttributeDefinitionField(
+                transformation, annotation);
 
         // Prefix and extend method
-        transformation.prefixMethod(method, statusToken + " = " + interField + ".checkBefore(" + configField + ");");
-        transformation.extendExistingMethod(method, interField + ".checkAfter(" + statusToken + ", null);");
+        transformation.prefixMethod(method, statusToken + " = " + interField
+                + ".checkBefore(" + configField + ");");
+        transformation.extendExistingMethod(method, interField + ".checkAfter("
+                + statusToken + ", null);");
     }
 
-    private String createConfigAttributeDefinitionField(final ClassTransformation transformation, final Secured annotation) {
-        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition(annotation.value());
-        return transformation.addInjectedField(ConfigAttributeDefinition.class, 
-            "_$configAttributeDefinition", configAttributeDefinition);
+    private String createConfigAttributeDefinitionField(
+            final ClassTransformation transformation, final Secured annotation) {
+        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition(
+                annotation.value());
+        return transformation.addInjectedField(ConfigAttributeDefinition.class,
+                "_$configAttributeDefinition", configAttributeDefinition);
     }
 }

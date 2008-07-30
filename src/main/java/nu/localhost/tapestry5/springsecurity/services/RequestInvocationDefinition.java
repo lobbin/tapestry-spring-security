@@ -4,38 +4,42 @@ import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.intercept.web.RequestKey;
 
 /**
- * Straight forward mapping definition of HttpRequestURIs to intercept
- * by FilterSecurityInterceptor.
+ * Straight forward mapping definition of HttpRequestURIs to intercept by
+ * FilterSecurityInterceptor.
  * 
  * @author Michael Gerzabek
- *
+ * 
  */
 public class RequestInvocationDefinition {
 
-	private RequestKey _requestKey;
-	private ConfigAttributeDefinition _configAttributeDefinition;
+    private RequestKey requestKey;
+    private ConfigAttributeDefinition configAttributeDefinition;
 
-	public RequestInvocationDefinition( String key, String roles ) {
-	
-		_requestKey = new RequestKey( key );
-		_configAttributeDefinition = new ConfigAttributeDefinition( roles );
-	}
-	
-	public RequestKey getRequestKey() {
-		return _requestKey;
-	}
+    public RequestInvocationDefinition(String key, String roles) {
 
-	public void setRequestKey(RequestKey requestKey) {
-		_requestKey = requestKey;
-	}
+        this.requestKey = new RequestKey(key);
+        this.configAttributeDefinition = new ConfigAttributeDefinition(roles);
+    }
 
-	public ConfigAttributeDefinition getConfigAttributeDefinition() {
-		return _configAttributeDefinition;
-	}
+    public RequestKey getRequestKey() {
 
-	public void setConfigAttributeDefinition(
-			ConfigAttributeDefinition configAttributeDefinition ) {
-		_configAttributeDefinition = configAttributeDefinition;
-	}
+        return requestKey;
+    }
+
+    public void setRequestKey(RequestKey requestKey) {
+
+        this.requestKey = requestKey;
+    }
+
+    public ConfigAttributeDefinition getConfigAttributeDefinition() {
+
+        return configAttributeDefinition;
+    }
+
+    public void setConfigAttributeDefinition(
+            ConfigAttributeDefinition configAttributeDefinition) {
+
+        this.configAttributeDefinition = configAttributeDefinition;
+    }
 
 }

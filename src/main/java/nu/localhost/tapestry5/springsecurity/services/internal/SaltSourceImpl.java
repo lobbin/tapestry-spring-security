@@ -26,6 +26,7 @@ import nu.localhost.tapestry5.springsecurity.services.SaltSourceService;
 
 import org.springframework.security.providers.dao.salt.SystemWideSaltSource;
 
-public class SaltSourceImpl extends SystemWideSaltSource implements SaltSourceService {
-    
+public class SaltSourceImpl extends SystemWideSaltSource implements
+        SaltSourceService {
+
 }
