@@ -17,6 +17,8 @@
 
 package nu.localhost.tapestry5.springsecurity.services;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import nu.localhost.tapestry5.springsecurity.services.internal.HttpServletRequestFilterWrapper;
@@ -27,6 +29,7 @@ import nu.localhost.tapestry5.springsecurity.services.internal.SecurityChecker;
 import nu.localhost.tapestry5.springsecurity.services.internal.SpringSecurityExceptionTranslationFilter;
 import nu.localhost.tapestry5.springsecurity.services.internal.SpringSecurityWorker;
 import nu.localhost.tapestry5.springsecurity.services.internal.StaticSecurityChecker;
+import nu.localhost.tapestry5.springsecurity.services.internal.T5AccessDeniedHandler;
 
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -46,8 +49,12 @@ import org.springframework.security.AccessDecisionManager;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.AuthenticationTrustResolver;
 import org.springframework.security.AuthenticationTrustResolverImpl;
+import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.context.HttpSessionContextIntegrationFilter;
 import org.springframework.security.context.SecurityContextImpl;
+import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
+import org.springframework.security.intercept.web.FilterSecurityInterceptor;
+import org.springframework.security.intercept.web.RequestKey;
 import org.springframework.security.providers.AuthenticationProvider;
 import org.springframework.security.providers.ProviderManager;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
@@ -55,9 +62,7 @@ import org.springframework.security.providers.anonymous.AnonymousProcessingFilte
 import org.springframework.security.providers.dao.DaoAuthenticationProvider;
 import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
-import org.springframework.security.ui.AccessDeniedHandlerImpl;
 import org.springframework.security.ui.AuthenticationEntryPoint;
-import org.springframework.security.ui.ExceptionTranslationFilter;
 import org.springframework.security.ui.logout.LogoutHandler;
 import org.springframework.security.ui.logout.SecurityContextLogoutHandler;
 import org.springframework.security.ui.rememberme.RememberMeProcessingFilter;
@@ -68,6 +73,7 @@ import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntr
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.memory.UserAttribute;
 import org.springframework.security.userdetails.memory.UserAttributeEditor;
+import org.springframework.security.util.AntUrlPathMatcher;
 import org.springframework.security.vote.AccessDecisionVoter;
 import org.springframework.security.vote.AffirmativeBased;
 import org.springframework.security.vote.RoleVoter;
@@ -79,6 +85,7 @@ import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFil
  * 
  * @author Ivan Dubrov
  * @author Robin Helgelin
+ * @author Michael Gerzabek
  */
 public class SecurityModule {
     @SuppressWarnings("unchecked")
@@ -124,6 +131,7 @@ public class SecurityModule {
         configuration.add("spring-security.target.url", "/");
         configuration.add("spring-security.afterlogout.url", "/");
         configuration.add("spring-security.accessDenied.url", "");
+        configuration.add("spring-security.force.ssl.login", "false");
         configuration.add("spring-security.rememberme.key", "REMEMBERMEKEY");
         configuration.add("spring-security.loginform.url", "/loginpage");
         configuration.add("spring-security.anonymous.key", "spring_anonymous");
@@ -142,9 +150,10 @@ public class SecurityModule {
           @InjectService("HttpSessionContextIntegrationFilter") HttpServletRequestFilter httpSessionContextIntegrationFilter,
           @InjectService("AuthenticationProcessingFilter") HttpServletRequestFilter authenticationProcessingFilter,
           @InjectService("RememberMeProcessingFilter") HttpServletRequestFilter rememberMeProcessingFilter,
-          @InjectService("SecurityContextHolderAwareRequestFilter") HttpServletRequestFilter
-          securityContextHolderAwareRequestFilter,
-          @InjectService("AnonymousProcessingFilter") HttpServletRequestFilter anonymousProcessingFilter) {
+          @InjectService("SecurityContextHolderAwareRequestFilter") HttpServletRequestFilter securityContextHolderAwareRequestFilter,
+          @InjectService("AnonymousProcessingFilter") HttpServletRequestFilter anonymousProcessingFilter,
+          @InjectService("FilterSecurityInterceptor") HttpServletRequestFilter filterSecurityInterceptor,
+          @InjectService("SpringSecurityExceptionFilter") SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter) {
 
         configuration.add("springSecurityHttpSessionContextIntegrationFilter", httpSessionContextIntegrationFilter, "before:springSecurity*");
         configuration.add("springSecurityAuthenticationProcessingFilter", authenticationProcessingFilter);
@@ -154,8 +163,40 @@ public class SecurityModule {
         configuration.add("springSecurityAnonymousProcessingFilter", anonymousProcessingFilter,
                 "after:springSecurityRememberMeProcessingFilter",
                 "after:springSecurityAuthenticationProcessingFilter");
+        configuration.add( "springSecurityExceptionFilter", new HttpServletRequestFilterWrapper( springSecurityExceptionFilter ), "before:springSecurityFilterSecurityInterceptor" );
+        configuration.add("springSecurityFilterSecurityInterceptor", filterSecurityInterceptor, "after:springSecurity*" );
     }
-
+    
+    @Marker(SpringSecurityServices.class)
+    public static HttpServletRequestFilter buildFilterSecurityInterceptor( 
+            @SpringSecurityServices final AccessDecisionManager accessDecisionManager,
+            @SpringSecurityServices final AuthenticationManager manager,
+            final Collection<RequestInvocationDefinition> contributions )
+    throws Exception {
+        
+        FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
+        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = convertCollectionToLinkedHashMap( contributions );
+        DefaultFilterInvocationDefinitionSource source = new DefaultFilterInvocationDefinitionSource( new AntUrlPathMatcher( true ), requestMap );
+        interceptor.setAccessDecisionManager(accessDecisionManager);
+        interceptor.setAlwaysReauthenticate( false );
+        interceptor.setAuthenticationManager( manager );
+        interceptor.setObjectDefinitionSource( source );
+        interceptor.setValidateConfigAttributes( true );
+        interceptor.afterPropertiesSet();
+        return new HttpServletRequestFilterWrapper( interceptor );
+    }
+    
+    static LinkedHashMap<RequestKey, ConfigAttributeDefinition> convertCollectionToLinkedHashMap( 
+            Collection<RequestInvocationDefinition> urls ) {
+        
+        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
+        for( RequestInvocationDefinition url : urls ) {
+            
+            requestMap.put(url.getRequestKey(), url.getConfigAttributeDefinition() );
+        }
+        return requestMap;
+    }
+    
     @Marker(SpringSecurityServices.class)
     public static HttpServletRequestFilter buildHttpSessionContextIntegrationFilter()
     throws Exception {
@@ -324,32 +365,40 @@ public class SecurityModule {
 
     @Marker(SpringSecurityServices.class)
     public static AuthenticationEntryPoint buildAuthenticationEntryPoint(
-            @Inject @Value("${spring-security.loginform.url}") final String loginFormUrl)
+            @Inject @Value("${spring-security.loginform.url}") final String loginFormUrl,
+            @Inject @Value("${spring-security.force.ssl.login}") final String forceHttps )
     throws Exception {
+        
         AuthenticationProcessingFilterEntryPoint entryPoint = new AuthenticationProcessingFilterEntryPoint();
         entryPoint.setLoginFormUrl(loginFormUrl);
         entryPoint.afterPropertiesSet();
+        boolean forceSSL = Boolean.parseBoolean( forceHttps );
+        entryPoint.setForceHttps( forceSSL );
         return entryPoint;
     }
 
-    @Marker(SpringSecurityServices.class)
-    public static RequestFilter buildSpringSecurityExceptionFilter(final RequestGlobals globals, final AuthenticationEntryPoint aep,
-            @Inject @Value("${spring-security.accessDenied.url}") final String accessDeniedUrl)
+    public static SpringSecurityExceptionTranslationFilter buildSpringSecurityExceptionFilter(
+        final AuthenticationEntryPoint aep,
+        @Inject @Value("${spring-security.accessDenied.url}") final String accessDeniedUrl ) 
     throws Exception {
-        ExceptionTranslationFilter filter = new SpringSecurityExceptionTranslationFilter();
+      
+        SpringSecurityExceptionTranslationFilter filter = new SpringSecurityExceptionTranslationFilter();
         filter.setAuthenticationEntryPoint(aep);
         if (!accessDeniedUrl.equals("")) {
-            AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
+            T5AccessDeniedHandler accessDeniedHandler = new T5AccessDeniedHandler();
             accessDeniedHandler.setErrorPage(accessDeniedUrl);
             filter.setAccessDeniedHandler(accessDeniedHandler);
         }
         filter.afterPropertiesSet();
-        return new RequestFilterWrapper(globals, filter);
+        return filter;
     }
 
-    public static void contributeRequestHandler(final OrderedConfiguration< RequestFilter > configuration,
-            @InjectService("SpringSecurityExceptionFilter") final RequestFilter springSecurityExceptionFilter) {
-        configuration.add("SpringSecurityExceptionFilter", springSecurityExceptionFilter, "after:ErrorFilter");
+    public static void contributeRequestHandler(
+        final OrderedConfiguration<RequestFilter> configuration,
+        final RequestGlobals globals,
+        @InjectService("SpringSecurityExceptionFilter") final SpringSecurityExceptionTranslationFilter springSecurityExceptionFilter ) {
+                                            
+        configuration.add( "SpringSecurityExceptionFilter", new RequestFilterWrapper(globals, springSecurityExceptionFilter ), "after:ErrorFilter");
     }
 
     // Contribute three aspects of module: presentation, entities and
