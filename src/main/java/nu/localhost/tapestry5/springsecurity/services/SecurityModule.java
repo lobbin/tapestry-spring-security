@@ -61,6 +61,7 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationP
 import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
 import org.springframework.security.providers.dao.DaoAuthenticationProvider;
 import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
 import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
 import org.springframework.security.ui.AuthenticationEntryPoint;
 import org.springframework.security.ui.logout.LogoutHandler;
@@ -96,31 +97,27 @@ public class SecurityModule {
                 SpringSecurityServices.class);
     }
 
-    public static void contributeAlias(@SpringSecurityServices
-    SaltSourceService saltSource, @SpringSecurityServices
-    AuthenticationProcessingFilter authenticationProcessingFilter,
-            Configuration<AliasContribution<?>> configuration) {
+    public static void contributeAlias(
+        @SpringSecurityServices
+        SaltSourceService saltSource, 
+        @SpringSecurityServices
+        AuthenticationProcessingFilter authenticationProcessingFilter,
+        @SpringSecurityServices
+        PasswordEncoder encoder,
+        Configuration<AliasContribution<?>> configuration) {
+        
         configuration.add(AliasContribution.create(SaltSourceService.class,
                 saltSource));
         configuration.add(AliasContribution.create(
                 AuthenticationProcessingFilter.class,
                 authenticationProcessingFilter));
+        configuration.add( AliasContribution.create(
+            PasswordEncoder.class, encoder ) );
     }
 
     @Marker(SpringSecurityServices.class)
-    public static PasswordEncoder buildPasswordEncoder(@Inject
-    @Value("${spring-security.password.encoder}")
-    final String passwordEncoder) {
-        try {
-            return (PasswordEncoder) Class.forName(passwordEncoder)
-                    .newInstance();
-        } catch (ClassNotFoundException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (IllegalAccessException ex) {
-            throw new IllegalArgumentException(ex);
-        } catch (InstantiationException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+    public static PasswordEncoder buildPasswordEncoder() {
+            return new PlaintextPasswordEncoder();
     }
 
     @Marker(SpringSecurityServices.class)
@@ -147,9 +144,6 @@ public class SecurityModule {
         configuration.add("spring-security.anonymous.key", "spring_anonymous");
         configuration.add("spring-security.anonymous.attribute",
                 "anonymous,ROLE_ANONYMOUS");
-        configuration
-                .add("spring-security.password.encoder",
-                        "org.springframework.security.providers.encoding.PlaintextPasswordEncoder");
         configuration.add("spring-security.password.salt", "DEADBEEF");
     }
 
