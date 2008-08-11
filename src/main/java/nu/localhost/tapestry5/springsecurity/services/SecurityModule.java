@@ -95,6 +95,9 @@ public class SecurityModule {
         binder.bind(AuthenticationTrustResolver.class,
                 AuthenticationTrustResolverImpl.class).withMarker(
                 SpringSecurityServices.class);
+        binder.bind( PasswordEncoder.class, 
+                PlaintextPasswordEncoder.class ).withMarker( 
+                SpringSecurityServices.class);
     }
 
     public static void contributeAlias(
@@ -102,8 +105,6 @@ public class SecurityModule {
         SaltSourceService saltSource, 
         @SpringSecurityServices
         AuthenticationProcessingFilter authenticationProcessingFilter,
-        @SpringSecurityServices
-        PasswordEncoder encoder,
         Configuration<AliasContribution<?>> configuration) {
         
         configuration.add(AliasContribution.create(SaltSourceService.class,
@@ -111,13 +112,6 @@ public class SecurityModule {
         configuration.add(AliasContribution.create(
                 AuthenticationProcessingFilter.class,
                 authenticationProcessingFilter));
-        configuration.add( AliasContribution.create(
-            PasswordEncoder.class, encoder ) );
-    }
-
-    @Marker(SpringSecurityServices.class)
-    public static PasswordEncoder buildPasswordEncoder() {
-            return new PlaintextPasswordEncoder();
     }
 
     @Marker(SpringSecurityServices.class)
