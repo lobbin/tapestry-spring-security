@@ -1,18 +1,19 @@
  -----
  Configuring
  -----
- Robin Helgelin
+ Robin Helgelin, Michael Gerzabek
  -----
 
-Configuring tapestry5-acegi
+Configuring tapestry-spring-security
 
-  Configuring your project to use tapestry5-acegi is almost as simple as dropping the jar in your projects classpath. You
-  can always look at the {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample}example application}} to see how
-  things are solved there.
+  Configuring your project to use tapestry-spring-security is almost as simple as dropping the jar in your projects classpath. You
+  can always look at the {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample}sample application}} to see how
+  things are solved there. The further explanations in this document are based on the configuration used in the sample application
+  {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/TestsecurityModule.java}TestsecurityModule.java}}. 
 
 * pom.xml
 
-  Currently tapestry5-springsecurity uses maven for dependencies. Configurating your project to use tapestry5-springsecurity is a small task,
+  Currently tapestry-spring-security uses maven for dependencies. Configurating your project to use tapestry-spring-security is a small task,
   just add the following to your project.
   
   Under \<dependencies\>, add:
@@ -34,90 +35,110 @@ Configuring tapestry5-acegi
   </repository>
 +----+
 
-* Configuration overrides
-
-  All configuration symbols provided by tapestry5-springsecurity can be overriden using the usual Tapestry methods.
+* Implemented Interfaces
   
-  In this example we change the default password encoder and the url called when we failed to login.
+  Most Spring Security authentication providers take advantage of the <<<UserDetails>>> and <<<UserDetailsService>>> 
+  interfaces. The contract for this latter interface consists of a single method:
+
++----+
+  UserDetails loadUserByUsername(String username) 
+    throws UsernameNotFoundException, DataAccessException;
++----+
+
+  This is the point where you integrate your Tapestry 5 application with Spring Security by simply implementing 
+  those 2 interfaces.
+  
+  Configuring Tapestry 5 with your implementation of the <<<UserDetailsService>>> is straight forward. You either provide 
+  a static build or bind method in your AppModule.java. In this module we used the build approach. 
   
 +----+
-    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add("spring-security.failure.url", "/loginpage/failed");
-        configuration.add("spring-security.password.encoder", "org.acegisecurity.providers.encoding.Md5PasswordEncoder");
-    }
-+----+
+  public static UserDetailsService buildUserDetailsService( 
+    @Inject
+    PasswordEncoder encoder, 
+    @Inject
+    SaltSource salt ) {
 
-  We also need some sort of authentication provider, most likely you will be using daoAuthenticationManager which can be
-  used like this.
+      return new MyUserDetailsService( encoder, salt );
+  }
++----+  
+  
+  See {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/internal/MyUserDetailsImpl.java}MyUserDetailsImpl.java}}
+  and {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/internal/MyUserDetailsImpl.java}MyUserDetailsService.java}}
+  to get an idea.
+  
+* ApplicationDefaults  
+  
+  All configuration symbols provided by tapestry-spring-security can be overriden using the usual Tapestry methods.
+  
+  In this example we change the the urls called when login failed and when a user has insufficient rights to view a page.
   
 +----+
-    public static void bind(ServiceBinder binder) {
-        binder.bind(UserDetailsService.class, UserDetailsServiceImpl.class);
-    }
+  public static void contributeApplicationDefaults(
+    MappedConfiguration<String, String> configuration ) {
     
-    public static UserDetailsService buildUserDetailsService(
-            Session session) {
-        return new UserDetailsServiceImpl(session);
-    }
-    
-    public static void contributeProviderManager(
-            OrderedConfiguration<AuthenticationProvider> configuration,
-            @InjectService("DaoAuthenticationProvider")
-            AuthenticationProvider daoAuthenticationProvider) {
-        configuration.add("daoAuthenticationProvider", daoAuthenticationProvider);
-    }
+      configuration.add( "spring-security.failure.url", "/loginpage/failed" );
+      configuration.add( "spring-security.accessDenied.url", "/forbidden" );
+  }
 +----+
 
-* Alias contributions
+  Find a {{{Configuration}complete list of configuration}} symbols at the end of this document.
+  
+* Authentication Provider
 
-  This is from my test application AppModule.java where SaltSourceImpl is a quick class that simply extends
-  SystemWideSaltSource. It also shows how to override the default AuthenticationProcessingFilter. All together, this shows
-  how to easily override the default services used internally in tapestry5-spring-security.
-
+  A Spring Security <<<AuthenticationProvider>>> asks a <<<UserDetailsService>>> to provide a <<<UserDetails>>> object. 
+  The resultant <<<UserDetails>>> object - and particularly the <<<GrantedAuthority[]>>>s contained within the <<<UserDetails>>> 
+  object - will be used when building the fully populated <<<Authentication>>> object.
+  
+  Spring Security ships with a convenient default implementation, the <<<DaoAuthenticationProvider>>>. This is the one we
+  used in the sample application. Of course you can implement your own provider given the usecase you have to implement.
+  
 +----+
-    public static void bind(ServiceBinder binder) {
-        binder.bind(SaltSourceService.class, SaltSourceImpl.class).withId("MySaltSource");
-    }
-    
-    public static SaltSourceService buildMySaltSource() throws Exception {
-        SaltSourceImpl saltSource = new SaltSourceImpl();
-        saltSource.setSystemWideSalt("BBEEF");
-        saltSource.afterPropertiesSet();
-        return saltSource;
-    }
-    
-    public static AuthenticationProcessingFilter buildMyAuthenticationProcessingFilter(
-	        @AcegiServices final AuthenticationManager manager,
-	        @AcegiServices final RememberMeServices rememberMeServices,
-	        @Inject @Value("${spring-security.check.url}") final String authUrl,
-	        @Inject @Value("${spring-security.target.url}") final String targetUrl,
-	        @Inject @Value("${spring-security.failure.url}") final String failureUrl)
-    throws Exception {
-        AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
-        filter.setAuthenticationManager(manager);
-        filter.setAuthenticationFailureUrl(failureUrl);
-        filter.setDefaultTargetUrl(targetUrl);
-        filter.setFilterProcessesUrl(authUrl);
-        filter.setRememberMeServices(rememberMeServices);
-        filter.afterPropertiesSet();
-        return filter;
-    }
-    
-    public static void contributeAliasOverrides(
-	    	@InjectService("MySaltSource")
-	    	SaltSourceService saltSource,
-	    	@InjectService("MyAuthenticationProcessingFilter")
-	    	AuthenticationProcessingFilter authenticationProcessingFilter,
-	        Configuration<AliasContribution> configuration) {
-        configuration.add(AliasContribution.create(SaltSourceService.class,
-        	saltSource));
-        configuration.add(AliasContribution.create(AuthenticationProcessingFilter.class,
-        	authenticationProcessingFilter));
-    }    
+  public static void contributeProviderManager(
+      OrderedConfiguration<AuthenticationProvider> configuration,
+      @InjectService( "DaoAuthenticationProvider" )
+      AuthenticationProvider daoAuthenticationProvider ) {
+
+      configuration.add( "daoAuthenticationProvider", daoAuthenticationProvider );
+  }
 +----+
 
-* Configuration Symbols
+* Alias Contributions
+
+  Currently there are 3 services you can override with an <<<AliasContribution>>>, the <<<SaltSourceService>>, 
+  the <<<AuthenticationProcessingFilter>>>, and the <<<PasswordEncoder>>>. One usual override you
+  might want to take is the <<<PasswordEncoder>>>. By default the <<<PlainTextPasswordEncoder>>> is used.
+  The sample application makes use of <<<ShaPasswordEncoder>>> which is also part of the Spring Security
+  standard distribution. It's contributed like 
+  
++----+
+  public static void contributeAlias(
+      Configuration<AliasContribution<PasswordEncoder>> configuration ) {
+
+      configuration.add( AliasContribution.create(
+          PasswordEncoder.class,
+          new ShaPasswordEncoder() ) );
+  }
++----+
+
+* Contributions to the FilterSecurityInterceptor
+
+  To be complete there is one other configuration you might want to add, if 
+  you are about to secure static resources. To do so you simply contribute to the <<<FilterSecurityInterceptor>>>
+  which is in charge of checking requests with ant style regexp patterns. In the sample application 
+  there is a pdf that should be only visible for users with <<<ROLE_ADMIN>>> credentials. To do so a 
+  <<<RequestInvocationDefinition>>> needs to be declared and contributed.
+  
++----+
+  public static void contributeFilterSecurityInterceptor(
+      Configuration<RequestInvocationDefinition> configuration ) {
+
+      configuration.add( new RequestInvocationDefinition(
+          "/ltd.pdf",
+          "ROLE_ADMIN" ) );
+  }
++----+
+  
+* {Configuration} Symbols
 
   [spring-security.check.url]
   	The internal check url used by Spring Security, Defaults to "/j_acegi_security_check".
@@ -150,10 +171,6 @@ Configuring tapestry5-acegi
   
   [spring-security.anonymous.attribute]
   	Attributes set on anonymous users. Defaults to "anonymous,ROLE_ANONYMOUS".
-  	
-  [spring-security.password.encoder]
-  	Change the default password encoder. Must implement org.acegisecurity.providers.encoding.PasswordEncoder. Defaults to
-  	"org.acegisecurity.providers.encoding.PlaintextPasswordEncoder".
   	
   [spring-security.password.salt]
   	Salt the password is salted with. Defaults to "DEADBEEF".

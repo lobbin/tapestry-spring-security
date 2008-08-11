@@ -14,12 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project name="Security services (Acegi based) for Tapestry">
+<project name="Security Services (Spring Security/ Acegi based) for Tapestry 5">
 	<publishDate format="yyyy-MM-dd"/>
 	
 	<body>
 		<links>
 			<item name="Tapestry 5" href="http://tapestry.apache.org/tapestry5" />
+			<item name="Spring Security" href="http://static.springframework.org/spring-security/site/" />
 		</links>
 		
 		<menu name="Main">

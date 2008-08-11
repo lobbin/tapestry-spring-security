@@ -1,7 +1,7 @@
  -----
- tapestry5-acegi
+ tapestry-spring-security (former tapestry-acegi)
  -----
- Robin Helgelin
+ Robin Helgelin, Michael Gerzabek
  -----
 
 Description
@@ -15,8 +15,8 @@ Description
   
 News
 
-  * 2008-07-30: Release <<2.0.0>> is now available. New AccessDeniedHandler allows tapestry to serve a forbidden page.
-    Now static resources can be secured. 
+  * 2008-07-30: Release <<2.0.0>> is now available. New AccessDeniedHandler allows Tapestry to serve a forbidden page.
+    Static resources can be secured. 
 
   * 2008-05-23: Release <<1.1.0>> is now available. Initial support for secure methods. Add supports for overriding the
     AuthenticationProcessingFilter and fixes a few bugs.

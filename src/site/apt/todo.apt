@@ -1,7 +1,7 @@
  -----
  TODO
  -----
- Robin Helgelin
+ Robin Helgelin, Michael Gerzabek
  -----
 
 Todo list
@@ -11,6 +11,12 @@ Todo list
     * Write tests
     
     * Thread safety on our FilterWrappers?
+    
+    * Use a MappedConfiguration to define contributions to <<<FilterSecurityInterceptor>>>
+    
+    * Document code
+    
+    * Do we really need to extend the <<<SaltSourceService>>> to be able to make it aliasable?  
     
     * Add components that will make life easier
     

@@ -1,8 +1,7 @@
  -----
  Securing pages
  -----
- Robin Helgelin
- Michael Gerzabek
+ Robin Helgelin, Michael Gerzabek
  -----
 
 Securing pages
@@ -35,13 +34,15 @@ public void doSomeAdminTask()
 
 Securing Static Resources
 
-  In oder to secure a static resource contribute to the FilterSecurityInterceptor. You can define the 
+  In oder to secure a static resource contribute to the <<<FilterSecurityInterceptor>>>. You can define the 
   needed Authorities via a simple list of komma separated Strings.
   
 +----+
-public static void contributeFilterSecurityInterceptor( Configuration<RequestInvocationDefinition> configuration ) {
+  public static void contributeFilterSecurityInterceptor( 
+    Configuration<RequestInvocationDefinition> configuration ) {
   
-  configuration.add( new RequestInvocationDefinition( "/ltd.pdf", "ROLE_ADMIN" ) );
-}
+    configuration.add( 
+      new RequestInvocationDefinition( "/ltd.pdf", "ROLE_ADMIN" ) );
+  }
 +----+
   
