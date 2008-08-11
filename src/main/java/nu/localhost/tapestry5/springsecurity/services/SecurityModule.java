@@ -361,7 +361,6 @@ public class SecurityModule {
     @Marker(SpringSecurityServices.class)
     public final AuthenticationProvider buildDaoAuthenticationProvider(
             final UserDetailsService userDetailsService,
-            @SpringSecurityServices
             final PasswordEncoder passwordEncoder,
             final SaltSourceService saltSource) throws Exception {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
