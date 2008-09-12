@@ -95,8 +95,8 @@ public class SecurityModule {
         binder.bind(AuthenticationTrustResolver.class,
                 AuthenticationTrustResolverImpl.class).withMarker(
                 SpringSecurityServices.class);
-        binder.bind( PasswordEncoder.class, 
-                PlaintextPasswordEncoder.class ).withMarker( 
+        binder.bind(PasswordEncoder.class, 
+                PlaintextPasswordEncoder.class).withMarker(
                 SpringSecurityServices.class);
     }
 
