@@ -40,8 +40,11 @@
 		<developer>
 			<name>Ivan Dubrov</name>
 		</developer>
+
 		<developer>
+
       <name>Michael Gerzabek</name>
+
     </developer>
 	</developers>
 
@@ -51,11 +54,13 @@
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
 			<version>${tapestry-release-version}</version>
+
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-ioc</artifactId>
 			<version>${tapestry-release-version}</version>
+
 		</dependency>
 		
 		<!-- Spring security -->
@@ -70,12 +75,12 @@
 			<version>${spring-security-version}</version>
 		</dependency>
         
-    <!-- Springframework -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-dao</artifactId>
-      <version>${spring-release-version}</version>
-    </dependency>
+		<!-- Springframework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-dao</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
             
 		<!-- Servlets API -->
 		<dependency>
@@ -83,6 +88,7 @@
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
@@ -146,14 +152,15 @@
 			</plugin>
 		</plugins>
 	
+
 	    <!-- beta 3 for ftp directory support -->
-			<!--extensions>
+			<extensions>
 				<extension>
 					<groupId>org.apache.maven.wagon</groupId>
 					<artifactId>wagon-ftp</artifactId>
-					<version>2.0-SNAPSHOT</version>
+					<version>1.0-beta</version>
 				</extension>
-			</extensions-->
+			</extensions>
     </build>
 
     <reporting>
@@ -267,6 +274,7 @@
 	<properties>
 		<tapestry-release-version>5.0.14</tapestry-release-version>
 		<spring-security-version>2.0.3</spring-security-version>
+
 		<spring-release-version>2.0.8</spring-release-version>
 		<cobertura-plugin-version>2.1</cobertura-plugin-version>
 		<testng-release-version>5.1</testng-release-version>
