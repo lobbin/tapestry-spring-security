@@ -63,7 +63,7 @@ Configuring tapestry-spring-security
 +----+  
   
   See {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/internal/MyUserDetailsImpl.java}MyUserDetailsImpl.java}}
-  and {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/internal/MyUserDetailsImpl.java}MyUserDetailsService.java}}
+  and {{{http://www.localhost.nu/svn/public/tapestry-spring-security-sample/src/main/java/nu/localhost/tapestry5/springsecuritytest/services/internal/MyUserDetailsService.java}MyUserDetailsService.java}}
   to get an idea.
   
 * ApplicationDefaults  
