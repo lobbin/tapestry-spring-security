@@ -5,7 +5,7 @@
 	<groupId>nu.localhost.tapestry</groupId>
 	<artifactId>tapestry-spring-security</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.1</version>
+	<version>2.0.2-SNAPSHOT</version>
 	<name>Spring Security services for Tapestry</name>
 	<inceptionYear>2007</inceptionYear>
 	<url>http://www.localhost.nu/java/tapestry-spring-security</url>
@@ -94,6 +94,7 @@
 			<artifactId>testng</artifactId>
 			<version>${testng-release-version}</version>
 			<classifier>jdk15</classifier>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	
