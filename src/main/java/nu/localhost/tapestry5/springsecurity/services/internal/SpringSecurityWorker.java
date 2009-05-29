@@ -19,6 +19,8 @@ package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Modifier;
 
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
@@ -31,84 +33,81 @@ import org.springframework.security.annotation.Secured;
  * @author Ivan Dubrov
  */
 public class SpringSecurityWorker implements ComponentClassTransformWorker {
+
     private SecurityChecker securityChecker;
 
-    public SpringSecurityWorker(final SecurityChecker securityChecker) {
+    public SpringSecurityWorker( final SecurityChecker securityChecker ) {
+
         this.securityChecker = securityChecker;
     }
 
-    public final void transform(final ClassTransformation transformation,
-            final MutableComponentModel model) {
+    public final void transform( final ClassTransformation transformation, final MutableComponentModel model ) {
+
+        model.addRenderPhase( BeginRender.class );
+        model.addRenderPhase( CleanupRender.class );
+        
         // Secure methods
-        for (TransformMethodSignature method : transformation
-                .findMethodsWithAnnotation(Secured.class)) {
-            transformMethod(transformation, method);
+        for ( TransformMethodSignature method : transformation.findMethodsWithAnnotation( Secured.class ) ) {
+            transformMethod( transformation, method );
         }
 
         // Secure pages
-        Secured annotation = transformation.getAnnotation(Secured.class);
-        if (annotation != null) {
-            transformPage(transformation, annotation);
+        Secured annotation = transformation.getAnnotation( Secured.class );
+        if ( annotation != null ) {
+
+            transformPage( transformation, annotation );
         }
     }
 
-    private void transformPage(final ClassTransformation transformation,
-            final Secured annotation) {
+    private void transformPage( final ClassTransformation transformation, final Secured annotation ) {
+
         // Security checker
-        final String interField = transformation.addInjectedField(
-                SecurityChecker.class, "_$checker", securityChecker);
+        final String interField = transformation.addInjectedField( SecurityChecker.class, "_$checker", securityChecker );
 
         // Attribute definition
-        final String configField = createConfigAttributeDefinitionField(
-                transformation, annotation);
+        final String configField = createConfigAttributeDefinitionField( transformation, annotation );
 
         // Interceptor token
-        final String tokenField = transformation
-                .addField(
-                        Modifier.PRIVATE,
-                        "org.springframework.security.intercept.InterceptorStatusToken",
-                        "_$token");
+        final String tokenField = transformation.addField(
+                Modifier.PRIVATE,
+                "org.springframework.security.intercept.InterceptorStatusToken",
+                "_$token" );
 
         // Extend class
-        transformation.extendMethod(TransformConstants.BEGIN_RENDER_SIGNATURE,
-                tokenField + " = " + interField + ".checkBefore(" + configField
-                        + ");");
-        transformation.extendMethod(
-                TransformConstants.CLEANUP_RENDER_SIGNATURE, interField
-                        + ".checkAfter(" + tokenField + ", null);");
+        transformation.extendMethod( TransformConstants.BEGIN_RENDER_SIGNATURE, tokenField + " = " + interField
+                + ".checkBefore(" + configField + ");" );
+        transformation.extendMethod( TransformConstants.CLEANUP_RENDER_SIGNATURE, interField + ".checkAfter("
+                + tokenField + ", null);" );
 
     }
 
-    private void transformMethod(final ClassTransformation transformation,
-            final TransformMethodSignature method) {
+    private void transformMethod( final ClassTransformation transformation, final TransformMethodSignature method ) {
+
         // Security checker
-        final String interField = transformation.addInjectedField(
-                SecurityChecker.class, "_$checker", securityChecker);
+        final String interField = transformation.addInjectedField( SecurityChecker.class, "_$checker", securityChecker );
         // Interceptor status token
-        final String statusToken = transformation
-                .addField(
-                        Modifier.PRIVATE,
-                        "org.springframework.security.intercept.InterceptorStatusToken",
-                        "_$token");
+        final String statusToken = transformation.addField(
+                Modifier.PRIVATE,
+                "org.springframework.security.intercept.InterceptorStatusToken",
+                "_$token" );
 
         // Attribute definition
-        final Secured annotation = transformation.getMethodAnnotation(method,
-                Secured.class);
-        final String configField = createConfigAttributeDefinitionField(
-                transformation, annotation);
+        final Secured annotation = transformation.getMethodAnnotation( method, Secured.class );
+        final String configField = createConfigAttributeDefinitionField( transformation, annotation );
 
         // Prefix and extend method
-        transformation.prefixMethod(method, statusToken + " = " + interField
-                + ".checkBefore(" + configField + ");");
-        transformation.extendExistingMethod(method, interField + ".checkAfter("
-                + statusToken + ", null);");
+        transformation.prefixMethod( method, statusToken + " = " + interField + ".checkBefore(" + configField + ");" );
+        transformation.extendExistingMethod( method, interField + ".checkAfter(" + statusToken + ", null);" );
     }
 
     private String createConfigAttributeDefinitionField(
-            final ClassTransformation transformation, final Secured annotation) {
-        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition(
-                annotation.value());
-        return transformation.addInjectedField(ConfigAttributeDefinition.class,
-                "_$configAttributeDefinition", configAttributeDefinition);
+            final ClassTransformation transformation,
+            final Secured annotation ) {
+
+        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition( annotation.value() );
+        return transformation.addInjectedField(
+                ConfigAttributeDefinition.class,
+                "_$configAttributeDefinition",
+                configAttributeDefinition );
     }
 }
