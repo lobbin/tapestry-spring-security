@@ -137,6 +137,32 @@ Configuring tapestry-spring-security
           "ROLE_ADMIN" ) );
   }
 +----+
+
+  You can also configure several roles at the same time.
+
++----+
+  public static void contributeFilterSecurityInterceptor(
+      Configuration<RequestInvocationDefinition> configuration ) {
+
+      configuration.add( new RequestInvocationDefinition(
+          "/another.pdf",
+          "ROLE_ADMIN, ROLE_USER" ) );
+  }
++----+
+
+
+  Apart from single items wildcards can be used also. This way whole page-categories can be secured:
+
++----+
+  public static void contributeFilterSecurityInterceptor(
+      Configuration<RequestInvocationDefinition> configuration ) {
+
+      configuration.add( new RequestInvocationDefinition(
+          "/loginArea/*",
+          "ROLE_USER" ) );
+  }
++----+
+
   
 * {Configuration} Symbols
 
