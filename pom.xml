@@ -40,11 +40,17 @@
 		<developer>
 			<name>Ivan Dubrov</name>
 		</developer>
-
 		<developer>
-
       <name>Michael Gerzabek</name>
-
+    </developer>
+    <developer>
+      <id>kkopruch</id>
+      <name>Klaus Kopruch</name>
+      <email>klaus.kopruch@materna.de</email>
+      <organization>MATERNA Gmbh</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
     </developer>
 	</developers>
 
@@ -87,6 +93,13 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
+		</dependency>
+		
+		<!-- Apache Commons -->
+		<dependency>
+		  <groupId>commons-lang</groupId>
+		  <artifactId>commons-lang</artifactId>
+		  <version>2.4</version>
 		</dependency>
 		
 		<dependency>
