@@ -305,9 +305,7 @@ public class SecurityModule {
 
         cfg.add( "securityContextLogoutHandler", new SecurityContextLogoutHandler() );
         cfg.add( "rememberMeLogoutHandler", rememberMeLogoutHandler );
-        cfg.add(
-                "tapestryLogoutHandler",
-                new TapestryLogoutHandler( globals ) );
+        cfg.add( "tapestryLogoutHandler", new TapestryLogoutHandler( globals ) );
     }
 
     @Marker( SpringSecurityServices.class )
