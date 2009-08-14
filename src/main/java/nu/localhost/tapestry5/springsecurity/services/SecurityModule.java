@@ -1,6 +1,7 @@
 /*
  * Copyright 2007 Ivan Dubrov
  * Copyright 2007, 2008 Robin Helgelin
+ * Copyright 2009 Michael Gerzabek
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
