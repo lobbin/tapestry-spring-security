@@ -134,6 +134,7 @@ public class SecurityModule {
         configuration.add( "spring-security.anonymous.key", "spring_anonymous" );
         configuration.add( "spring-security.anonymous.attribute", "anonymous,ROLE_ANONYMOUS" );
         configuration.add( "spring-security.password.salt", "DEADBEEF" );
+        configuration.add( "spring-security.always.use.target.url", "false" );
     }
 
     public static void contributeComponentClassTransformWorker(
@@ -224,7 +225,8 @@ public class SecurityModule {
             @SpringSecurityServices final RememberMeServices rememberMeServices,
             @Inject @Value( "${spring-security.check.url}" ) final String authUrl,
             @Inject @Value( "${spring-security.target.url}" ) final String targetUrl,
-            @Inject @Value( "${spring-security.failure.url}" ) final String failureUrl ) throws Exception {
+            @Inject @Value( "${spring-security.failure.url}" ) final String failureUrl,
+            @Inject @Value( "${spring-security.always.use.target.url}" ) final String alwaysUseTargetUrl ) throws Exception {
 
         AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
         filter.setAuthenticationManager( manager );
@@ -232,6 +234,7 @@ public class SecurityModule {
         filter.setDefaultTargetUrl( targetUrl );
         filter.setFilterProcessesUrl( authUrl );
         filter.setRememberMeServices( rememberMeServices );
+        filter.setAlwaysUseDefaultTargetUrl( Boolean.parseBoolean( alwaysUseTargetUrl ) );
         filter.afterPropertiesSet();
         return filter;
     }

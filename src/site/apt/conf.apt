@@ -104,7 +104,7 @@ Configuring tapestry-spring-security
 
 * Alias Contributions
 
-  Currently there are 3 services you can override with an <<<AliasContribution>>>, the <<<SaltSourceService>>, 
+  Currently there are 3 services you can override with an <<<AliasContribution>>>, the <<<SaltSourceService>>>, 
   the <<<AuthenticationProcessingFilter>>>, and the <<<PasswordEncoder>>>. One usual override you
   might want to take is the <<<PasswordEncoder>>>. By default the <<<PlainTextPasswordEncoder>>> is used.
   The sample application makes use of <<<ShaPasswordEncoder>>> which is also part of the Spring Security
@@ -200,3 +200,6 @@ Configuring tapestry-spring-security
   	
   [spring-security.password.salt]
   	Salt the password is salted with. Defaults to "DEADBEEF".
+
+  [spring-security.always.use.target.url]
+    Whether the <<<AuthenticationProcessingFilter>>> always should use the default target url. Defaults to "false".
