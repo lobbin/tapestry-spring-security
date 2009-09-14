@@ -26,10 +26,14 @@ import java.util.Set;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContextHolder;
+//import org.springframework.security.Authentication;
+//import org.springframework.security.GrantedAuthority;
+//import org.springframework.security.GrantedAuthorityImpl;
+//import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
 /**
@@ -87,7 +91,7 @@ public class IfRole {
             return Collections.EMPTY_LIST;
         }
 
-        if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().length < 1)) {
+        if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().size() < 1)) {
             return Collections.EMPTY_LIST;
         }
 

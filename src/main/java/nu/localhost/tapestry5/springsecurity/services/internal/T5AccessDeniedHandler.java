@@ -10,13 +10,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.AccessDeniedException;
-import org.springframework.security.ui.AccessDeniedHandler;
-import org.springframework.security.util.PortMapper;
-import org.springframework.security.util.PortMapperImpl;
-import org.springframework.security.util.PortResolver;
-import org.springframework.security.util.PortResolverImpl;
-import org.springframework.security.util.RedirectUrlBuilder;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.PortMapper;
+import org.springframework.security.web.PortMapperImpl;
+import org.springframework.security.web.PortResolver;
+import org.springframework.security.web.PortResolverImpl;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.util.RedirectUrlBuilder;
+//import org.springframework.security.AccessDeniedException;
+//import org.springframework.security.ui.AccessDeniedHandler;
+//import org.springframework.security.util.PortMapper;
+//import org.springframework.security.util.PortMapperImpl;
+//import org.springframework.security.util.PortResolver;
+//import org.springframework.security.util.PortResolverImpl;
+//import org.springframework.security.util.RedirectUrlBuilder;
 
 /**
  * Enables Tapestry to handle AccessDenied Exceptions. So you can show some
@@ -37,7 +44,8 @@ public class T5AccessDeniedHandler implements AccessDeniedHandler {
     private PortMapper portMapper = new PortMapperImpl();
     private PortResolver portResolver = new PortResolverImpl();
 
-    public void handle(ServletRequest request, ServletResponse response,
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException,
             ServletException {
 

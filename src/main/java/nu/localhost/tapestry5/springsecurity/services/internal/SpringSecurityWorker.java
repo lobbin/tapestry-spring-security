@@ -19,6 +19,8 @@ package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Modifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -26,8 +28,11 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformMethodSignature;
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.annotation.Secured;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.access.annotation.Secured;
+//import org.springframework.security.ConfigAttributeDefinition;
+//import org.springframework.security.annotation.Secured;
 
 /**
  * @author Ivan Dubrov
@@ -104,10 +109,14 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
             final ClassTransformation transformation,
             final Secured annotation ) {
 
-        ConfigAttributeDefinition configAttributeDefinition = new ConfigAttributeDefinition( annotation.value() );
+        List<ConfigAttribute> configAttributeDefinition = new ArrayList<ConfigAttribute>(  );
+		for (String annValue : annotation.value()) {
+			configAttributeDefinition.add(new SecurityConfig(annValue));
+		}
+                ConfigAttributeHolder configAttributeHolder = new ConfigAttributeHolder(configAttributeDefinition);
         return transformation.addInjectedField(
-                ConfigAttributeDefinition.class,
+                ConfigAttributeHolder.class,
                 "_$configAttributeDefinition",
-                configAttributeDefinition );
+                configAttributeHolder );
     }
 }

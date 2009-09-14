@@ -16,10 +16,17 @@
  
 package nu.localhost.tapestry5.springsecurity.services;
 
-import org.apache.commons.lang.StringUtils;
 
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.intercept.web.RequestKey;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.web.access.intercept.RequestKey;
+//import org.springframework.util.StringUtils;
+
+//import org.springframework.security.ConfigAttributeDefinition;
+//import org.springframework.security.intercept.web.RequestKey;
 
 /**
  * Straight forward mapping definition of HttpRequestURIs to intercept by
@@ -31,15 +38,18 @@ import org.springframework.security.intercept.web.RequestKey;
 public class RequestInvocationDefinition {
 
     private RequestKey requestKey;
-    private ConfigAttributeDefinition configAttributeDefinition;
+    private List<ConfigAttribute> configAttributes;
 
     public RequestInvocationDefinition(String key, String roles) {
         this.requestKey = new RequestKey(key);
-        this.configAttributeDefinition = new ConfigAttributeDefinition(
-            StringUtils.stripAll(
+		String[] allAttrs = StringUtils.stripAll(
                 StringUtils.splitPreserveAllTokens(roles, ',')
-            )
-        );
+            );
+		this.configAttributes = new ArrayList<ConfigAttribute>();
+		for (String attr : allAttrs) {
+			this.configAttributes.add(new SecurityConfig(attr));
+		}
+
     }
 
     public RequestKey getRequestKey() {
@@ -50,13 +60,13 @@ public class RequestInvocationDefinition {
         this.requestKey = requestKey;
     }
 
-    public ConfigAttributeDefinition getConfigAttributeDefinition() {
-        return configAttributeDefinition;
+    public List<ConfigAttribute> getConfigAttributeDefinition() {
+        return configAttributes;
     }
 
     public void setConfigAttributeDefinition(
-            ConfigAttributeDefinition configAttributeDefinition) {
-        this.configAttributeDefinition = configAttributeDefinition;
+            List<ConfigAttribute> configAttrs) {
+        this.configAttributes = configAttrs;
     }
 
 }

@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package nu.localhost.tapestry5.springsecurity.services.internal;
 
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.intercept.AbstractSecurityInterceptor;
-import org.springframework.security.intercept.InterceptorStatusToken;
-import org.springframework.security.intercept.ObjectDefinitionSource;
+//import org.springframework.security.ConfigAttributeDefinition;
+import org.springframework.security.access.SecurityMetadataSource;
+import org.springframework.security.access.intercept.AbstractSecurityInterceptor;
+import org.springframework.security.access.intercept.InterceptorStatusToken;
 
+//import org.springframework.security.intercept.AbstractSecurityInterceptor;
+//import org.springframework.security.intercept.InterceptorStatusToken;
+//import org.springframework.security.intercept.ObjectDefinitionSource;
 /**
  * Straighforward implementation of the {@link SecurityChecker}.
  * 
@@ -31,7 +33,7 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
         implements SecurityChecker {
 
     /** Object definition source. */
-    private ObjectDefinitionSource objectDefinitionSource = new StaticDefinitionSource();
+    private SecurityMetadataSource objectDefinitionSource = new StaticDefinitionSource();
 
     /**
      * Delegate to the
@@ -68,16 +70,11 @@ public class StaticSecurityChecker extends AbstractSecurityInterceptor
      */
     @SuppressWarnings("unchecked")
     public final Class getSecureObjectClass() {
-        return ConfigAttributeDefinition.class;
+        return ConfigAttributeHolder.class;
     }
 
-    /**
-     * Obtain {@link ObjectDefinitionSource}.
-     * 
-     * @return {@link ObjectDefinitionSource}.
-     */
-    public final ObjectDefinitionSource obtainObjectDefinitionSource() {
+    @Override
+    public SecurityMetadataSource obtainSecurityMetadataSource() {
         return objectDefinitionSource;
     }
-    
 }

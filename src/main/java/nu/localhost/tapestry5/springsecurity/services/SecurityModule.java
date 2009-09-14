@@ -47,40 +47,78 @@ import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestGlobals;
-import org.springframework.security.AccessDecisionManager;
-import org.springframework.security.AuthenticationManager;
-import org.springframework.security.AuthenticationTrustResolver;
-import org.springframework.security.AuthenticationTrustResolverImpl;
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.context.HttpSessionContextIntegrationFilter;
-import org.springframework.security.context.SecurityContextImpl;
-import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
-import org.springframework.security.intercept.web.FilterSecurityInterceptor;
-import org.springframework.security.intercept.web.RequestKey;
-import org.springframework.security.providers.AuthenticationProvider;
-import org.springframework.security.providers.ProviderManager;
-import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
-import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
-import org.springframework.security.providers.dao.DaoAuthenticationProvider;
-import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
-import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
-import org.springframework.security.ui.AuthenticationEntryPoint;
-import org.springframework.security.ui.logout.LogoutHandler;
-import org.springframework.security.ui.logout.SecurityContextLogoutHandler;
-import org.springframework.security.ui.rememberme.RememberMeProcessingFilter;
-import org.springframework.security.ui.rememberme.RememberMeServices;
-import org.springframework.security.ui.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.memory.UserAttribute;
-import org.springframework.security.userdetails.memory.UserAttributeEditor;
-import org.springframework.security.util.AntUrlPathMatcher;
-import org.springframework.security.vote.AccessDecisionVoter;
-import org.springframework.security.vote.AffirmativeBased;
-import org.springframework.security.vote.RoleVoter;
-import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.memory.UserAttribute;
+import org.springframework.security.core.userdetails.memory.UserAttributeEditor;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.access.intercept.RequestKey;
+import org.springframework.security.web.authentication.AnonymousProcessingFilter;
+//import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+//import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.rememberme.RememberMeProcessingFilter;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
+import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.web.util.AntUrlPathMatcher;
+import org.springframework.security.web.wrapper.SecurityContextHolderAwareRequestFilter;
+//import org.springframework.security.AccessDecisionManager;
+//import org.springframework.security.AuthenticationManager;
+//import org.springframework.security.AuthenticationTrustResolver;
+//import org.springframework.security.AuthenticationTrustResolverImpl;
+//import org.springframework.security.ConfigAttributeDefinition;
+//import org.springframework.security.context.HttpSessionContextIntegrationFilter;
+//import org.springframework.security.context.SecurityContextImpl;
+//import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
+//import org.springframework.security.intercept.web.FilterSecurityInterceptor;
+//import org.springframework.security.intercept.web.RequestKey;
+//import org.springframework.security.providers.AuthenticationProvider;
+//import org.springframework.security.providers.ProviderManager;
+//import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
+//import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
+//import org.springframework.security.providers.dao.DaoAuthenticationProvider;
+//import org.springframework.security.providers.encoding.PasswordEncoder;
+//import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
+//import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
+//import org.springframework.security.ui.AuthenticationEntryPoint;
+//import org.springframework.security.ui.logout.LogoutHandler;
+//import org.springframework.security.ui.logout.SecurityContextLogoutHandler;
+//import org.springframework.security.ui.rememberme.RememberMeProcessingFilter;
+//import org.springframework.security.ui.rememberme.RememberMeServices;
+//import org.springframework.security.ui.rememberme.TokenBasedRememberMeServices;
+//import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
+//import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+//import org.springframework.security.userdetails.UserDetailsService;
+//import org.springframework.security.userdetails.memory.UserAttribute;
+//import org.springframework.security.userdetails.memory.UserAttributeEditor;
+//import org.springframework.security.util.AntUrlPathMatcher;
+//import org.springframework.security.vote.AccessDecisionVoter;
+//import org.springframework.security.vote.AffirmativeBased;
+//import org.springframework.security.vote.RoleVoter;
+//import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
@@ -102,12 +140,12 @@ public class SecurityModule {
 
     public static void contributeAlias(
             @SpringSecurityServices SaltSourceService saltSource,
-            @SpringSecurityServices AuthenticationProcessingFilter authenticationProcessingFilter,
+            @SpringSecurityServices UsernamePasswordAuthenticationProcessingFilter authenticationProcessingFilter,
             Configuration<AliasContribution<?>> configuration ) {
 
         configuration.add( AliasContribution.create( SaltSourceService.class, saltSource ) );
         configuration.add( AliasContribution.create(
-                AuthenticationProcessingFilter.class,
+                UsernamePasswordAuthenticationProcessingFilter.class,
                 authenticationProcessingFilter ) );
     }
 
@@ -184,23 +222,23 @@ public class SecurityModule {
             final Collection<RequestInvocationDefinition> contributions ) throws Exception {
 
         FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
-        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = convertCollectionToLinkedHashMap( contributions );
-        DefaultFilterInvocationDefinitionSource source = new DefaultFilterInvocationDefinitionSource(
+        LinkedHashMap<RequestKey, List<ConfigAttribute>> requestMap = convertCollectionToLinkedHashMap( contributions );
+        DefaultFilterInvocationSecurityMetadataSource source = new DefaultFilterInvocationSecurityMetadataSource(
                 new AntUrlPathMatcher( true ),
                 requestMap );
         interceptor.setAccessDecisionManager( accessDecisionManager );
         interceptor.setAlwaysReauthenticate( false );
         interceptor.setAuthenticationManager( manager );
-        interceptor.setObjectDefinitionSource( source );
+        interceptor.setSecurityMetadataSource(source);
         interceptor.setValidateConfigAttributes( true );
         interceptor.afterPropertiesSet();
         return new HttpServletRequestFilterWrapper( interceptor );
     }
 
-    static LinkedHashMap<RequestKey, ConfigAttributeDefinition> convertCollectionToLinkedHashMap(
+    static LinkedHashMap<RequestKey, List<ConfigAttribute>> convertCollectionToLinkedHashMap(
             Collection<RequestInvocationDefinition> urls ) {
 
-        LinkedHashMap<RequestKey, ConfigAttributeDefinition> requestMap = new LinkedHashMap<RequestKey, ConfigAttributeDefinition>();
+        LinkedHashMap<RequestKey, List<ConfigAttribute>> requestMap = new LinkedHashMap<RequestKey, List<ConfigAttribute>>();
         for ( RequestInvocationDefinition url : urls ) {
 
             requestMap.put( url.getRequestKey(), url.getConfigAttributeDefinition() );
@@ -220,7 +258,7 @@ public class SecurityModule {
     }
 
     @Marker( SpringSecurityServices.class )
-    public static AuthenticationProcessingFilter buildRealAuthenticationProcessingFilter(
+    public static UsernamePasswordAuthenticationProcessingFilter buildRealAuthenticationProcessingFilter(
             @SpringSecurityServices final AuthenticationManager manager,
             @SpringSecurityServices final RememberMeServices rememberMeServices,
             @Inject @Value( "${spring-security.check.url}" ) final String authUrl,
@@ -228,20 +266,28 @@ public class SecurityModule {
             @Inject @Value( "${spring-security.failure.url}" ) final String failureUrl,
             @Inject @Value( "${spring-security.always.use.target.url}" ) final String alwaysUseTargetUrl ) throws Exception {
 
-        AuthenticationProcessingFilter filter = new AuthenticationProcessingFilter();
+        UsernamePasswordAuthenticationProcessingFilter filter = new UsernamePasswordAuthenticationProcessingFilter();
         filter.setAuthenticationManager( manager );
-        filter.setAuthenticationFailureUrl( failureUrl );
-        filter.setDefaultTargetUrl( targetUrl );
+
+        
+
+        filter.setAuthenticationFailureHandler( new SimpleUrlAuthenticationFailureHandler(failureUrl) );
+
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl(targetUrl);
+        successHandler.setAlwaysUseDefaultTargetUrl( Boolean.parseBoolean( alwaysUseTargetUrl ) );
+        filter.setAuthenticationSuccessHandler( successHandler);
+		filter.setFilterProcessesUrl(targetUrl);
         filter.setFilterProcessesUrl( authUrl );
-        filter.setRememberMeServices( rememberMeServices );
-        filter.setAlwaysUseDefaultTargetUrl( Boolean.parseBoolean( alwaysUseTargetUrl ) );
+        filter.setRememberMeServices( rememberMeServices );		        
+
         filter.afterPropertiesSet();
         return filter;
     }
 
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildAuthenticationProcessingFilter(
-            final AuthenticationProcessingFilter filter ) throws Exception {
+            final UsernamePasswordAuthenticationProcessingFilter filter ) throws Exception {
 
         return new HttpServletRequestFilterWrapper( filter );
     }
@@ -309,7 +355,7 @@ public class SecurityModule {
 
         cfg.add( "securityContextLogoutHandler", new SecurityContextLogoutHandler() );
         cfg.add( "rememberMeLogoutHandler", rememberMeLogoutHandler );
-        cfg.add( "tapestryLogoutHandler", new TapestryLogoutHandler( globals ) );
+        cfg.add( "tapestryLogoutHandler", new TapestryLogoutHandler( globals ) ,new String[0]);
     }
 
     @Marker( SpringSecurityServices.class )
@@ -386,6 +432,7 @@ public class SecurityModule {
             @SpringSecurityServices final AuthenticationManager authenticationManager ) throws Exception {
 
         StaticSecurityChecker checker = new StaticSecurityChecker();
+
         checker.setAccessDecisionManager( accessDecisionManager );
         checker.setAuthenticationManager( authenticationManager );
         checker.afterPropertiesSet();

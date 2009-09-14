@@ -23,9 +23,12 @@ import nu.localhost.tapestry5.springsecurity.services.LogoutService;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.ui.logout.LogoutHandler;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+//import org.springframework.security.Authentication;
+//import org.springframework.security.context.SecurityContextHolder;
+//import org.springframework.security.ui.logout.LogoutHandler;
 
 /**
  * @author Ivan Dubrov

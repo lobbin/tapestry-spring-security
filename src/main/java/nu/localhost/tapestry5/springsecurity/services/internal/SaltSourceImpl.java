@@ -23,8 +23,9 @@ package nu.localhost.tapestry5.springsecurity.services.internal;
  */
 
 import nu.localhost.tapestry5.springsecurity.services.SaltSourceService;
+import org.springframework.security.authentication.dao.SystemWideSaltSource;
 
-import org.springframework.security.providers.dao.salt.SystemWideSaltSource;
+//import org.springframework.security.providers.dao.salt.SystemWideSaltSource;
 
 public class SaltSourceImpl extends SystemWideSaltSource implements
         SaltSourceService {

@@ -16,7 +16,10 @@
 
 package nu.localhost.tapestry5.springsecurity.services;
 
-import org.springframework.security.providers.dao.SaltSource;
+//import org.springframework.security.providers.dao.SaltSource;
+
+import org.springframework.security.authentication.dao.SaltSource;
+
 
 /**
  * Interface used for making it easier to override the SaltSource service.

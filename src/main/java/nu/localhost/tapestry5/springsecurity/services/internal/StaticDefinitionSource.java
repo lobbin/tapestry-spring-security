@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityMetadataSource;
 
-import org.springframework.security.ConfigAttributeDefinition;
-import org.springframework.security.intercept.method.MethodDefinitionSource;
-
+//import org.springframework.security.ConfigAttributeDefinition;
+//import org.springframework.security.intercept.method.MethodDefinitionSource;
 /**
  * Implementation of {@link MethodDefinitionSource} that simply casts security
  * object to the {@link ConfigAttributeDefinition}.
  * 
  * @author Ivan Dubrov
  */
-public class StaticDefinitionSource implements MethodDefinitionSource {
+public class StaticDefinitionSource implements SecurityMetadataSource {
+
     /**
      * This implementation simply casts security object to the
      * {@link ConfigAttributeDefinition}.
@@ -38,34 +40,25 @@ public class StaticDefinitionSource implements MethodDefinitionSource {
      *            security object
      * @return security object casted to {@link ConfigAttributeDefinition}.
      */
-    public final ConfigAttributeDefinition getAttributes(final Object object) {
-        return (ConfigAttributeDefinition) object;
+    public final List<ConfigAttribute> getAttributes(final Object object) {
+        ConfigAttributeHolder attrHolder = (ConfigAttributeHolder) object;
+        return (List<ConfigAttribute>) attrHolder.getAttributes();
     }
 
     /**
-     * Returns null.
-     * 
-     * @return null.
-     */
-    public final Collection<ConfigAttributeDefinition> getConfigAttributeDefinitions() {
-        return null;
-    }
-
-    /**
-     * Returns true if clazz is extension of {@link ConfigAttributeDefinition}.
+     * Returns true if clazz is extension of {@link ConfigAttributeHolder}.
      * 
      * @param clazz
      *            the class that is being queried
-     * @return true if clazz is extension of {@link ConfigAttributeDefinition}.
+     * @return true if clazz is extension of {@link ConfigAttributeHolder}.
      */
     @SuppressWarnings("unchecked")
     public final boolean supports(final Class clazz) {
-        return ConfigAttributeDefinition.class.isAssignableFrom(clazz);
+        return ConfigAttributeHolder.class.isAssignableFrom(clazz);
     }
 
     @SuppressWarnings("unchecked")
-    public ConfigAttributeDefinition getAttributes(Method method,
-            Class targetClass) {
+    public Collection<ConfigAttribute> getAllConfigAttributes() {
         return null;
     }
 }

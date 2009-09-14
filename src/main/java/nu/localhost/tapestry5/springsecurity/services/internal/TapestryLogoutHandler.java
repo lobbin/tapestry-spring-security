@@ -21,8 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Session;
-import org.springframework.security.Authentication;
-import org.springframework.security.ui.logout.LogoutHandler;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+//import org.springframework.security.Authentication;
+//import org.springframework.security.ui.logout.LogoutHandler;
 
 /**
  * @author Michael Gerzabek
