@@ -1,6 +1,6 @@
 /*
  * Copyright 2007 Ivan Dubrov
- * Copyright 2007, 2008 Robin Helgelin
+ * Copyright 2007, 2008, 2009 Robin Helgelin
  * Copyright 2009 Michael Gerzabek
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,12 +71,10 @@ import org.springframework.security.web.access.intercept.DefaultFilterInvocation
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.access.intercept.RequestKey;
 import org.springframework.security.web.authentication.AnonymousProcessingFilter;
-//import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-//import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -85,40 +83,6 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
 import org.springframework.security.web.util.AntUrlPathMatcher;
 import org.springframework.security.web.wrapper.SecurityContextHolderAwareRequestFilter;
-//import org.springframework.security.AccessDecisionManager;
-//import org.springframework.security.AuthenticationManager;
-//import org.springframework.security.AuthenticationTrustResolver;
-//import org.springframework.security.AuthenticationTrustResolverImpl;
-//import org.springframework.security.ConfigAttributeDefinition;
-//import org.springframework.security.context.HttpSessionContextIntegrationFilter;
-//import org.springframework.security.context.SecurityContextImpl;
-//import org.springframework.security.intercept.web.DefaultFilterInvocationDefinitionSource;
-//import org.springframework.security.intercept.web.FilterSecurityInterceptor;
-//import org.springframework.security.intercept.web.RequestKey;
-//import org.springframework.security.providers.AuthenticationProvider;
-//import org.springframework.security.providers.ProviderManager;
-//import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
-//import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
-//import org.springframework.security.providers.dao.DaoAuthenticationProvider;
-//import org.springframework.security.providers.encoding.PasswordEncoder;
-//import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
-//import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
-//import org.springframework.security.ui.AuthenticationEntryPoint;
-//import org.springframework.security.ui.logout.LogoutHandler;
-//import org.springframework.security.ui.logout.SecurityContextLogoutHandler;
-//import org.springframework.security.ui.rememberme.RememberMeProcessingFilter;
-//import org.springframework.security.ui.rememberme.RememberMeServices;
-//import org.springframework.security.ui.rememberme.TokenBasedRememberMeServices;
-//import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
-//import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
-//import org.springframework.security.userdetails.UserDetailsService;
-//import org.springframework.security.userdetails.memory.UserAttribute;
-//import org.springframework.security.userdetails.memory.UserAttributeEditor;
-//import org.springframework.security.util.AntUrlPathMatcher;
-//import org.springframework.security.vote.AccessDecisionVoter;
-//import org.springframework.security.vote.AffirmativeBased;
-//import org.springframework.security.vote.RoleVoter;
-//import org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
@@ -179,7 +143,7 @@ public class SecurityModule {
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
             SecurityChecker securityChecker ) {
 
-        configuration.add( "SpringSecurity", new SpringSecurityWorker( securityChecker ) );
+        configuration.add( "SpringSecurity", new SpringSecurityWorker( securityChecker ), "after:CleanupRender" );
     }
 
     public static void contributeHttpServletRequestHandler(
