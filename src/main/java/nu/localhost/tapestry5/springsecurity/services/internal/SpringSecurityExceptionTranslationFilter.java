@@ -28,38 +28,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.springframework.security.access.AccessDeniedException
-//import org.springframework.security.AuthenticationException;
-//import org.springframework.security.AuthenticationTrustResolver;
-//import org.springframework.security.AuthenticationTrustResolverImpl;
-//import org.springframework.security.InsufficientAuthenticationException;
-//import org.springframework.security.SpringSecurityException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-//import org.springframework.security.context.SecurityContextHolder;
-//import org.springframework.security.core.AuthenticationException;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.security.ui.AbstractProcessingFilter;
-//import org.springframework.security.ui.AccessDeniedHandler;
-//import org.springframework.security.ui.AccessDeniedHandlerImpl;
-//import org.springframework.security.ui.AuthenticationEntryPoint;
-//import org.springframework.security.ui.ExceptionTranslationFilter;
-//import org.springframework.security.ui.FilterChainOrder;
-//import org.springframework.security.ui.SpringSecurityFilter;
-//import org.springframework.security.ui.savedrequest.SavedRequest;
-//import org.springframework.security.util.PortResolver;
-//import org.springframework.security.util.PortResolverImpl;
-//import org.springframework.security.util.ThrowableAnalyzer;
-//import org.springframework.security.util.ThrowableCauseExtractor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-//import org.springframework.security.web.FilterChainOrder;
 import org.springframework.security.web.PortResolver;
 import org.springframework.security.web.PortResolverImpl;
-//import org.springframework.security.web.SpringSecurityFilter;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -102,7 +79,6 @@ public class SpringSecurityExceptionTranslationFilter extends GenericFilterBean 
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(authenticationEntryPoint, "authenticationEntryPoint must be specified");
-//        Assert.notNull(portResolver, "portResolver must be specified");
     }
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)

@@ -22,7 +22,7 @@ import org.springframework.security.access.ConfigAttribute;
 
 /**
  *
- * @author polrtex
+ * @author akochnev
  */
 public class ConfigAttributeHolder {
     private List<ConfigAttribute> attributes;

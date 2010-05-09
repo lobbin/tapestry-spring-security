@@ -75,9 +75,10 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         // Interceptor token
         final String tokenField = transformation.addField(
                 Modifier.PRIVATE,
-                "org.springframework.security.intercept.InterceptorStatusToken",
+                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
                 "_$token" );
 
+        
         // Extend class
         transformation.extendMethod( TransformConstants.BEGIN_RENDER_SIGNATURE, tokenField + " = " + interField
                 + ".checkBefore(" + configField + ");" );
@@ -93,7 +94,7 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         // Interceptor status token
         final String statusToken = transformation.addField(
                 Modifier.PRIVATE,
-                "org.springframework.security.intercept.InterceptorStatusToken",
+                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
                 "_$token" );
 
         // Attribute definition

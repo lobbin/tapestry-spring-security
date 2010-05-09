@@ -70,19 +70,19 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.intercept.DefaultFilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.access.intercept.RequestKey;
-import org.springframework.security.web.authentication.AnonymousProcessingFilter;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.authentication.rememberme.RememberMeProcessingFilter;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.AntUrlPathMatcher;
-import org.springframework.security.web.wrapper.SecurityContextHolderAwareRequestFilter;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
@@ -104,12 +104,12 @@ public class SecurityModule {
 
     public static void contributeAlias(
             @SpringSecurityServices SaltSourceService saltSource,
-            @SpringSecurityServices UsernamePasswordAuthenticationProcessingFilter authenticationProcessingFilter,
+            @SpringSecurityServices UsernamePasswordAuthenticationFilter authenticationProcessingFilter,
             Configuration<AliasContribution<?>> configuration ) {
 
         configuration.add( AliasContribution.create( SaltSourceService.class, saltSource ) );
         configuration.add( AliasContribution.create(
-                UsernamePasswordAuthenticationProcessingFilter.class,
+                UsernamePasswordAuthenticationFilter.class,
                 authenticationProcessingFilter ) );
     }
 
@@ -186,10 +186,9 @@ public class SecurityModule {
             final Collection<RequestInvocationDefinition> contributions ) throws Exception {
 
         FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
-        LinkedHashMap<RequestKey, List<ConfigAttribute>> requestMap = convertCollectionToLinkedHashMap( contributions );
-        DefaultFilterInvocationSecurityMetadataSource source = new DefaultFilterInvocationSecurityMetadataSource(
-                new AntUrlPathMatcher( true ),
-                requestMap );
+        LinkedHashMap<RequestKey, Collection<ConfigAttribute>> requestMap = convertCollectionToLinkedHashMap( contributions );
+        DefaultFilterInvocationSecurityMetadataSource source =
+                new DefaultFilterInvocationSecurityMetadataSource(new AntUrlPathMatcher( true ),requestMap );
         interceptor.setAccessDecisionManager( accessDecisionManager );
         interceptor.setAlwaysReauthenticate( false );
         interceptor.setAuthenticationManager( manager );
@@ -199,10 +198,10 @@ public class SecurityModule {
         return new HttpServletRequestFilterWrapper( interceptor );
     }
 
-    static LinkedHashMap<RequestKey, List<ConfigAttribute>> convertCollectionToLinkedHashMap(
+    static LinkedHashMap<RequestKey, Collection<ConfigAttribute>> convertCollectionToLinkedHashMap(
             Collection<RequestInvocationDefinition> urls ) {
 
-        LinkedHashMap<RequestKey, List<ConfigAttribute>> requestMap = new LinkedHashMap<RequestKey, List<ConfigAttribute>>();
+        LinkedHashMap<RequestKey, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestKey, Collection<ConfigAttribute>>();
         for ( RequestInvocationDefinition url : urls ) {
 
             requestMap.put( url.getRequestKey(), url.getConfigAttributeDefinition() );
@@ -222,7 +221,7 @@ public class SecurityModule {
     }
 
     @Marker( SpringSecurityServices.class )
-    public static UsernamePasswordAuthenticationProcessingFilter buildRealAuthenticationProcessingFilter(
+    public static UsernamePasswordAuthenticationFilter buildRealAuthenticationProcessingFilter(
             @SpringSecurityServices final AuthenticationManager manager,
             @SpringSecurityServices final RememberMeServices rememberMeServices,
             @Inject @Value( "${spring-security.check.url}" ) final String authUrl,
@@ -230,7 +229,7 @@ public class SecurityModule {
             @Inject @Value( "${spring-security.failure.url}" ) final String failureUrl,
             @Inject @Value( "${spring-security.always.use.target.url}" ) final String alwaysUseTargetUrl ) throws Exception {
 
-        UsernamePasswordAuthenticationProcessingFilter filter = new UsernamePasswordAuthenticationProcessingFilter();
+        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
         filter.setAuthenticationManager( manager );
 
         
@@ -251,7 +250,7 @@ public class SecurityModule {
 
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildAuthenticationProcessingFilter(
-            final UsernamePasswordAuthenticationProcessingFilter filter ) throws Exception {
+            final UsernamePasswordAuthenticationFilter filter ) throws Exception {
 
         return new HttpServletRequestFilterWrapper( filter );
     }
@@ -261,7 +260,7 @@ public class SecurityModule {
             @SpringSecurityServices final RememberMeServices rememberMe,
             @SpringSecurityServices final AuthenticationManager authManager ) throws Exception {
 
-        RememberMeProcessingFilter filter = new RememberMeProcessingFilter();
+        RememberMeAuthenticationFilter filter = new RememberMeAuthenticationFilter();
         filter.setRememberMeServices( rememberMe );
         filter.setAuthenticationManager( authManager );
         filter.afterPropertiesSet();
@@ -279,7 +278,7 @@ public class SecurityModule {
             @Inject @Value( "${spring-security.anonymous.attribute}" ) final String anonymousAttr,
             @Inject @Value( "${spring-security.anonymous.key}" ) final String anonymousKey ) throws Exception {
 
-        AnonymousProcessingFilter filter = new AnonymousProcessingFilter();
+        AnonymousAuthenticationFilter filter = new AnonymousAuthenticationFilter();
         filter.setKey( anonymousKey );
         UserAttributeEditor attrEditor = new UserAttributeEditor();
         attrEditor.setAsText( anonymousAttr );

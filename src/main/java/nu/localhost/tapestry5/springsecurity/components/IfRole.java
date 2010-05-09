@@ -26,10 +26,6 @@ import java.util.Set;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
-//import org.springframework.security.Authentication;
-//import org.springframework.security.GrantedAuthority;
-//import org.springframework.security.GrantedAuthorityImpl;
-//import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;

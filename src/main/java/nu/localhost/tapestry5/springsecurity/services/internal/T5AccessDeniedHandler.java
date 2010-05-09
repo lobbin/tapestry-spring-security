@@ -3,8 +3,6 @@ package nu.localhost.tapestry5.springsecurity.services.internal;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,13 +15,7 @@ import org.springframework.security.web.PortResolver;
 import org.springframework.security.web.PortResolverImpl;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.RedirectUrlBuilder;
-//import org.springframework.security.AccessDeniedException;
-//import org.springframework.security.ui.AccessDeniedHandler;
-//import org.springframework.security.util.PortMapper;
-//import org.springframework.security.util.PortMapperImpl;
-//import org.springframework.security.util.PortResolver;
-//import org.springframework.security.util.PortResolverImpl;
-//import org.springframework.security.util.RedirectUrlBuilder;
+
 
 /**
  * Enables Tapestry to handle AccessDenied Exceptions. So you can show some

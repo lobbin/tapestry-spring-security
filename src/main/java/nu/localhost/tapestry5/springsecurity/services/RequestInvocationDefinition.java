@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 package nu.localhost.tapestry5.springsecurity.services;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +21,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.access.intercept.RequestKey;
-//import org.springframework.util.StringUtils;
-
-//import org.springframework.security.ConfigAttributeDefinition;
-//import org.springframework.security.intercept.web.RequestKey;
 
 /**
  * Straight forward mapping definition of HttpRequestURIs to intercept by
  * FilterSecurityInterceptor.
- * 
+ *
  * @author Michael Gerzabek
- * 
+ *
  */
 public class RequestInvocationDefinition {
 
@@ -68,5 +62,4 @@ public class RequestInvocationDefinition {
             List<ConfigAttribute> configAttrs) {
         this.configAttributes = configAttrs;
     }
-
 }

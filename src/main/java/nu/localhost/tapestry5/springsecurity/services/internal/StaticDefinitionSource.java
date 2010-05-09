@@ -22,8 +22,6 @@ import java.util.List;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityMetadataSource;
 
-//import org.springframework.security.ConfigAttributeDefinition;
-//import org.springframework.security.intercept.method.MethodDefinitionSource;
 /**
  * Implementation of {@link MethodDefinitionSource} that simply casts security
  * object to the {@link ConfigAttributeDefinition}.

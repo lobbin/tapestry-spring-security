@@ -17,8 +17,6 @@
 
 package nu.localhost.tapestry5.springsecurity.services.internal;
 
-//import org.springframework.security.intercept.InterceptorStatusToken;
-
 import org.springframework.security.access.intercept.InterceptorStatusToken;
 
 
