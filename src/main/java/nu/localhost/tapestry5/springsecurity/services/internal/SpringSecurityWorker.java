@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Modifier;
@@ -26,11 +25,17 @@ import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.intercept.InterceptorStatusToken;
 //import org.springframework.security.ConfigAttributeDefinition;
 //import org.springframework.security.annotation.Secured;
 
@@ -41,83 +46,156 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
 
     private SecurityChecker securityChecker;
 
-    public SpringSecurityWorker( final SecurityChecker securityChecker ) {
+    public SpringSecurityWorker(final SecurityChecker securityChecker) {
 
         this.securityChecker = securityChecker;
     }
 
-    public final void transform( final ClassTransformation transformation, final MutableComponentModel model ) {
+    public final void transform(final ClassTransformation transformation, final MutableComponentModel model) {
 
-        model.addRenderPhase( BeginRender.class );
-        model.addRenderPhase( CleanupRender.class );
-        
+        model.addRenderPhase(BeginRender.class);
+        model.addRenderPhase(CleanupRender.class);
+
         // Secure methods
-        for ( TransformMethodSignature method : transformation.findMethodsWithAnnotation( Secured.class ) ) {
-            transformMethod( transformation, method );
+        for (TransformMethodSignature method : transformation.findMethodsWithAnnotation(Secured.class)) {
+            transformMethod(transformation, method);
         }
 
         // Secure pages
-        Secured annotation = transformation.getAnnotation( Secured.class );
-        if ( annotation != null ) {
+        Secured annotation = transformation.getAnnotation(Secured.class);
+        if (annotation != null) {
 
-            transformPage( transformation, annotation );
+            transformPage(transformation, annotation);
         }
     }
 
-    private void transformPage( final ClassTransformation transformation, final Secured annotation ) {
+    private void transformPage(final ClassTransformation transformation, final Secured annotation) {
 
         // Security checker
-        final String interField = transformation.addInjectedField( SecurityChecker.class, "_$checker", securityChecker );
+
+        final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);        
 
         // Attribute definition
-        final String configField = createConfigAttributeDefinitionField( transformation, annotation );
-
-        // Interceptor token
-        final String tokenField = transformation.addField(
-                Modifier.PRIVATE,
-                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
-                "_$token" );
-
+//        final String configField = createConfigAttributeDefinitionField(transformation, annotation);
+        final ConfigAttributeHolder confAttrHolder = createConfigAttributeDefinitionField(transformation, annotation);
         
+        // Interceptor token
+//        final String tokenField = transformation.addField(
+//                Modifier.PRIVATE,
+//                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
+//                "_$token" );
+
+        TransformField tokenFieldInstance = transformation.createField(Modifier.PRIVATE,
+                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
+                "_$token"); // InterceptorStatusToken
+
+        final FieldAccess tokenFieldAccess = tokenFieldInstance.getAccess();
+
+
         // Extend class
-        transformation.extendMethod( TransformConstants.BEGIN_RENDER_SIGNATURE, tokenField + " = " + interField
-                + ".checkBefore(" + configField + ");" );
-        transformation.extendMethod( TransformConstants.CLEANUP_RENDER_SIGNATURE, interField + ".checkAfter("
-                + tokenField + ", null);" );
+        TransformMethod beginRenderMethod = transformation.getOrCreateMethod(TransformConstants.BEGIN_RENDER_SIGNATURE);
+
+
+        /** REPLACED by the block immediately below **/
+//                transformation.extendMethod( TransformConstants.BEGIN_RENDER_SIGNATURE, tokenField + " = " + interField
+//                + ".checkBefore(" + configField + ");" );
+//
+        final SecurityChecker secChecker = this.securityChecker;
+        ComponentMethodAdvice beginRenderAdvice = new ComponentMethodAdvice() {
+
+            public void advise(ComponentMethodInvocation invocation) {
+                invocation.proceed();
+
+                // tokenField + " = " + interField   + ".checkBefore(" + configField + ");"
+//                ConfigAttributeHolder confAttrHolder = (ConfigAttributeHolder) configFieldInstance.read(invocation.getInstance());
+                InterceptorStatusToken statusTokenVal = secChecker.checkBefore(confAttrHolder);
+                tokenFieldAccess.write(invocation.getInstance(), statusTokenVal);
+            }
+        };
+
+        beginRenderMethod.addAdvice(beginRenderAdvice);
+
+        // ---------------- END TRANSFORMATION ------------------------
+
+
+        TransformMethod cleanupRenderMethod = transformation.getOrCreateMethod(TransformConstants.CLEANUP_RENDER_SIGNATURE);
+
+//        transformation.extendMethod( TransformConstants.CLEANUP_RENDER_SIGNATURE, interField + ".checkAfter("
+//                + tokenField + ", null);" );
+        ComponentMethodAdvice cleanupRenderAdvice = new ComponentMethodAdvice() {
+
+            public void advise(ComponentMethodInvocation invocation) {
+                invocation.proceed();
+
+                // interField + ".checkAfter(" + tokenField + ", null);
+                InterceptorStatusToken tokenFieldValue = (InterceptorStatusToken) tokenFieldAccess.read(invocation.getInstance());
+                secChecker.checkAfter(tokenFieldValue, null);
+            }
+        };
+
+        cleanupRenderMethod.addAdvice(cleanupRenderAdvice);
+
+        // ------------- END TRANSFORMATION ------------------------
 
     }
 
-    private void transformMethod( final ClassTransformation transformation, final TransformMethodSignature method ) {
+    private void transformMethod(final ClassTransformation transformation, final TransformMethodSignature method) {
 
         // Security checker
-        final String interField = transformation.addInjectedField( SecurityChecker.class, "_$checker", securityChecker );
+        final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
+
+        TransformMethod securedMethod = transformation.getOrCreateMethod(method);
+
         // Interceptor status token
-        final String statusToken = transformation.addField(
-                Modifier.PRIVATE,
+//        final String statusToken = transformation.addField(
+//                Modifier.PRIVATE,
+//                org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
+//                "_$token");
+        TransformField tokenFieldInstance = transformation.createField(Modifier.PRIVATE,
                 org.springframework.security.access.intercept.InterceptorStatusToken.class.getName(),
-                "_$token" );
+                "_$token"); // InterceptorStatusToken
+
+        final FieldAccess tokenFieldAccess = tokenFieldInstance.getAccess();
 
         // Attribute definition
-        final Secured annotation = transformation.getMethodAnnotation( method, Secured.class );
-        final String configField = createConfigAttributeDefinitionField( transformation, annotation );
+        final Secured annotation = transformation.getMethodAnnotation(method, Secured.class);
+        //final String configField = createConfigAttributeDefinitionField(transformation, annotation);
+        final ConfigAttributeHolder confAttrHolder = createConfigAttributeDefinitionField(transformation, annotation);
 
         // Prefix and extend method
-        transformation.prefixMethod( method, statusToken + " = " + interField + ".checkBefore(" + configField + ");" );
-        transformation.extendExistingMethod( method, interField + ".checkAfter(" + statusToken + ", null);" );
+//        transformation.prefixMethod(method, statusToken + " = " + interField + ".checkBefore(" + configField + ");");
+//        transformation.extendExistingMethod(method, interField + ".checkAfter(" + statusToken + ", null);");
+        final SecurityChecker secChecker = this.securityChecker;
+        ComponentMethodAdvice securedMethodAdvice = new ComponentMethodAdvice() {
+
+            public void advise(ComponentMethodInvocation invocation) {
+                InterceptorStatusToken statusTokenVal = secChecker.checkBefore(confAttrHolder);
+                tokenFieldAccess.write(invocation.getInstance(), statusTokenVal);
+                
+                invocation.proceed();
+
+                // interField + ".checkAfter(" + tokenField + ", null);
+                InterceptorStatusToken tokenFieldValue = (InterceptorStatusToken) tokenFieldAccess.read(invocation.getInstance());
+                secChecker.checkAfter(tokenFieldValue, null);
+            }
+        };
+
+        securedMethod.addAdvice(securedMethodAdvice);
     }
 
-    private String createConfigAttributeDefinitionField(
+    private ConfigAttributeHolder createConfigAttributeDefinitionField(
             final ClassTransformation transformation,
-            final Secured annotation ) {
+            final Secured annotation) {
 
-        List<ConfigAttribute> configAttributeDefinition = new ArrayList<ConfigAttribute>(  );
-		for (String annValue : annotation.value()) {
-			configAttributeDefinition.add(new SecurityConfig(annValue));
-		}
-                ConfigAttributeHolder configAttributeHolder = new ConfigAttributeHolder(configAttributeDefinition);
-        return transformation.addInjectedField(
+        List<ConfigAttribute> configAttributeDefinition = new ArrayList<ConfigAttribute>();
+        for (String annValue : annotation.value()) {
+            configAttributeDefinition.add(new SecurityConfig(annValue));
+        }
+        ConfigAttributeHolder configAttributeHolder = new ConfigAttributeHolder(configAttributeDefinition);
+        transformation.addInjectedField(
                 ConfigAttributeHolder.class,
                 "_$configAttributeDefinition",
-                configAttributeHolder );
+                configAttributeHolder);
+        return configAttributeHolder;
     }
 }
