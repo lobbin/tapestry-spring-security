@@ -91,7 +91,7 @@ public class IfRole {
             return Collections.EMPTY_LIST;
         }
 
-        Collection granted = Arrays.asList(currentUser.getAuthorities());
+        Collection granted = currentUser.getAuthorities();
         return granted;
     }
 
