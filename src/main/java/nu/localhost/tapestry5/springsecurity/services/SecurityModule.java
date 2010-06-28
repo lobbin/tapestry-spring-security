@@ -232,7 +232,7 @@ public class SecurityModule {
         UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
         filter.setAuthenticationManager( manager );
 
-        
+        filter.setPostOnly(false);
 
         filter.setAuthenticationFailureHandler( new SimpleUrlAuthenticationFailureHandler(failureUrl) );
 
