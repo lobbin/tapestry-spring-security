@@ -36,7 +36,6 @@ public class T5AccessDeniedHandler implements AccessDeniedHandler {
     private PortMapper portMapper = new PortMapperImpl();
     private PortResolver portResolver = new PortResolverImpl();
 
-    @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException,
             ServletException {
