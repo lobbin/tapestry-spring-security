@@ -304,10 +304,10 @@
     </distributionManagement>
 
     <properties>
-        <tapestry-release-version>5.2.0-SNAPSHOT</tapestry-release-version>
-        <spring-security-version>3.0.2.RELEASE</spring-security-version>
+        <tapestry-release-version>5.2.6</tapestry-release-version>
+        <spring-security-version>3.0.3.RELEASE</spring-security-version>
 
-        <spring-release-version>3.0.2.RELEASE</spring-release-version>
+        <spring-release-version>3.0.3.RELEASE</spring-release-version>
         <cobertura-plugin-version>2.1</cobertura-plugin-version>
         <testng-release-version>5.1</testng-release-version>
     </properties>

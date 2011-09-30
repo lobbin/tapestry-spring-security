@@ -17,7 +17,6 @@
 
 package nu.localhost.tapestry5.springsecurity.components;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -78,28 +77,26 @@ public class IfRole {
 
     private boolean test;
 
-    @SuppressWarnings("unchecked")
-    private Collection getPrincipalAuthorities() {
+    private Collection<GrantedAuthority> getPrincipalAuthorities() {
         Authentication currentUser = null;
         currentUser = SecurityContextHolder.getContext().getAuthentication();
 
         if (null == currentUser) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().size() < 1)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
-        Collection granted = currentUser.getAuthorities();
+        Collection<GrantedAuthority> granted = currentUser.getAuthorities();
         return granted;
     }
 
-    @SuppressWarnings("unchecked")
-    private Set authoritiesToRoles(Collection c) {
-        Set target = new HashSet();
+    private Set<String> authoritiesToRoles(Collection<GrantedAuthority> c) {
+        Set<String> target = new HashSet<String>();
 
-        for (Iterator iterator = c.iterator(); iterator.hasNext();) {
+        for (Iterator<GrantedAuthority> iterator = c.iterator(); iterator.hasNext();) {
             GrantedAuthority authority = (GrantedAuthority) iterator.next();
 
             if (null == authority.getAuthority()) {
@@ -114,9 +111,8 @@ public class IfRole {
         return target;
     }
 
-    @SuppressWarnings("unchecked")
-    private Set parseAuthoritiesString(String authorizationsString) {
-        final Set requiredAuthorities = new HashSet();
+    private Set<GrantedAuthority> parseAuthoritiesString(String authorizationsString) {
+        final Set<GrantedAuthority> requiredAuthorities = new HashSet<GrantedAuthority>();
         final String[] authorities = StringUtils.commaDelimitedListToStringArray(authorizationsString);
 
         for (int i = 0; i < authorities.length; i++) {
@@ -174,10 +170,9 @@ public class IfRole {
      *         and <var>required</var>.
      * 
      */
-    @SuppressWarnings("unchecked")
-    private Set retainAll(final Collection granted, final Set required) {
-        Set grantedRoles = authoritiesToRoles(granted);
-        Set requiredRoles = authoritiesToRoles(required);
+    private Set<GrantedAuthority> retainAll(final Collection<GrantedAuthority> granted, final Set<GrantedAuthority> required) {
+        Set<String> grantedRoles = authoritiesToRoles(granted);
+        Set<String> requiredRoles = authoritiesToRoles(required);
         grantedRoles.retainAll(requiredRoles);
 
         return rolesToAuthorities(grantedRoles, granted);
@@ -189,15 +184,14 @@ public class IfRole {
      * @return a Set of Authorities corresponding to the roles in the grantedRoles
      * that are also in the granted Set of Authorities
      */
-    @SuppressWarnings("unchecked")
-    private Set rolesToAuthorities(Set grantedRoles, Collection granted) {
-        Set target = new HashSet();
+    private Set<GrantedAuthority> rolesToAuthorities(Set<String> grantedRoles, Collection<GrantedAuthority> granted) {
+        Set<GrantedAuthority> target = new HashSet<GrantedAuthority>();
 
-        for (Iterator iterator = grantedRoles.iterator(); iterator.hasNext();) {
-            String role = (String) iterator.next();
+        for (Iterator<String> iterator = grantedRoles.iterator(); iterator.hasNext();) {
+            String role = iterator.next();
 
-            for (Iterator grantedIterator = granted.iterator(); grantedIterator.hasNext();) {
-                GrantedAuthority authority = (GrantedAuthority) grantedIterator.next();
+            for (Iterator<GrantedAuthority> grantedIterator = granted.iterator(); grantedIterator.hasNext();) {
+                GrantedAuthority authority = grantedIterator.next();
 
                 if (authority.getAuthority().equals(role)) {
                     target.add(authority);
@@ -214,7 +208,6 @@ public class IfRole {
      * satisfied.  Typically, only one will be used, but if more than one are used, then 
      * the conditions are effectively AND'd 
      */
-    @SuppressWarnings("unchecked")
     private boolean checkPermission() {
         if (((null == ifAllGranted) || "".equals(ifAllGranted))
          && ((null == ifAnyGranted) || "".equals(ifAnyGranted))
@@ -223,17 +216,17 @@ public class IfRole {
             return false;
         }
 
-        final Collection granted = getPrincipalAuthorities();
+        final Collection<GrantedAuthority> granted = getPrincipalAuthorities();
 
         if ((null != role) && !"".equals(role)) {
-            Set grantedCopy = retainAll(granted, parseAuthoritiesString(role));
+            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(role));
             if (grantedCopy.isEmpty()) {
                 return false;
             }
         }
 
         if ((null != ifNotGranted) && !"".equals(ifNotGranted)) {
-            Set grantedCopy = retainAll(granted, parseAuthoritiesString(ifNotGranted));
+            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(ifNotGranted));
 
             if (!grantedCopy.isEmpty()) {
                 return false;
@@ -247,7 +240,7 @@ public class IfRole {
         }
 
         if ((null != ifAnyGranted) && !"".equals(ifAnyGranted)) {
-            Set grantedCopy = retainAll(granted, parseAuthoritiesString(ifAnyGranted));
+            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(ifAnyGranted));
 
             if (grantedCopy.isEmpty()) {
                 return false;

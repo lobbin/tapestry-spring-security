@@ -50,12 +50,10 @@ public class StaticDefinitionSource implements SecurityMetadataSource {
      *            the class that is being queried
      * @return true if clazz is extension of {@link ConfigAttributeHolder}.
      */
-    @SuppressWarnings("unchecked")
-    public final boolean supports(final Class clazz) {
+    public final boolean supports(final Class<?> clazz) {
         return ConfigAttributeHolder.class.isAssignableFrom(clazz);
     }
 
-    @SuppressWarnings("unchecked")
     public Collection<ConfigAttribute> getAllConfigAttributes() {
         return null;
     }

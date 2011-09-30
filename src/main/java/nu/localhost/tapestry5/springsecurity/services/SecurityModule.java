@@ -71,7 +71,7 @@ import org.springframework.security.web.access.intercept.DefaultFilterInvocation
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.access.intercept.RequestKey;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -407,7 +407,7 @@ public class SecurityModule {
             @Inject @Value( "${spring-security.loginform.url}" ) final String loginFormUrl,
             @Inject @Value( "${spring-security.force.ssl.login}" ) final String forceHttps ) throws Exception {
 
-        AuthenticationProcessingFilterEntryPoint entryPoint = new AuthenticationProcessingFilterEntryPoint();
+        LoginUrlAuthenticationEntryPoint entryPoint = new LoginUrlAuthenticationEntryPoint();
         entryPoint.setLoginFormUrl( loginFormUrl );
         entryPoint.afterPropertiesSet();
         boolean forceSSL = Boolean.parseBoolean( forceHttps );
