@@ -17,9 +17,9 @@
 package nu.localhost.tapestry5.springsecurity.services.internal;
 
 import java.lang.reflect.Modifier;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -31,13 +31,10 @@ import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.intercept.InterceptorStatusToken;
-//import org.springframework.security.ConfigAttributeDefinition;
-//import org.springframework.security.annotation.Secured;
 
 /**
  * @author Ivan Dubrov
@@ -57,7 +54,7 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         model.addRenderPhase(CleanupRender.class);
 
         // Secure methods
-        for (TransformMethodSignature method : transformation.findMethodsWithAnnotation(Secured.class)) {
+        for (TransformMethod method : transformation.matchMethodsWithAnnotation(Secured.class)) {
             transformMethod(transformation, method);
         }
 
@@ -139,12 +136,12 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
 
     }
 
-    private void transformMethod(final ClassTransformation transformation, final TransformMethodSignature method) {
+    private void transformMethod(final ClassTransformation transformation, final TransformMethod method) {
 
         // Security checker
         final String interField = transformation.addInjectedField(SecurityChecker.class, "_$checker", securityChecker);
 
-        TransformMethod securedMethod = transformation.getOrCreateMethod(method);
+        TransformMethod securedMethod = transformation.getOrCreateMethod(method.getSignature());
 
         // Interceptor status token
 //        final String statusToken = transformation.addField(
@@ -158,7 +155,7 @@ public class SpringSecurityWorker implements ComponentClassTransformWorker {
         final FieldAccess tokenFieldAccess = tokenFieldInstance.getAccess();
 
         // Attribute definition
-        final Secured annotation = transformation.getMethodAnnotation(method, Secured.class);
+        final Secured annotation = method.getAnnotation(Secured.class);
         //final String configField = createConfigAttributeDefinitionField(transformation, annotation);
         final ConfigAttributeHolder confAttrHolder = createConfigAttributeDefinitionField(transformation, annotation);
 
