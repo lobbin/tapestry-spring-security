@@ -64,13 +64,12 @@ public class T5AccessDeniedHandler implements AccessDeniedHandler {
         urlBuilder.setPathInfo(loginForm);
 
         if (forceHttps && "http".equals(scheme)) {
-            Integer httpsPort = portMapper.lookupHttpsPort(new Integer(
-                    serverPort));
+            Integer httpsPort = portMapper.lookupHttpsPort(serverPort);
 
             if (httpsPort != null) {
                 // Overwrite scheme and port in the redirect URL
                 urlBuilder.setScheme("https");
-                urlBuilder.setPort(httpsPort.intValue());
+                urlBuilder.setPort(httpsPort);
             } else {
                 logger
                         .warn("Unable to redirect to HTTPS as no port mapping found for HTTP port "

@@ -96,13 +96,11 @@ public class IfRole {
     private Set<String> authoritiesToRoles(Collection<GrantedAuthority> c) {
         Set<String> target = new HashSet<String>();
 
-        for (Iterator<GrantedAuthority> iterator = c.iterator(); iterator.hasNext();) {
-            GrantedAuthority authority = (GrantedAuthority) iterator.next();
-
+        for (GrantedAuthority authority : c) {
             if (null == authority.getAuthority()) {
                 throw new IllegalArgumentException(
-                    "Cannot process GrantedAuthority objects which return null from getAuthority() - attempting to process "
-                    + authority.toString());
+                        "Cannot process GrantedAuthority objects which return null from getAuthority() - attempting to process " +
+                                authority.toString());
             }
 
             target.add(authority.getAuthority());
@@ -115,9 +113,7 @@ public class IfRole {
         final Set<GrantedAuthority> requiredAuthorities = new HashSet<GrantedAuthority>();
         final String[] authorities = StringUtils.commaDelimitedListToStringArray(authorizationsString);
 
-        for (int i = 0; i < authorities.length; i++) {
-            String authority = authorities[i];
-
+        for (String authority : authorities) {
             // Remove the role's whitespace characters without depending on JDK 1.4+
             // Includes space, tab, new line, carriage return and form feed.
             String role = StringUtils.replace(authority, " ", "");
@@ -187,12 +183,8 @@ public class IfRole {
     private Set<GrantedAuthority> rolesToAuthorities(Set<String> grantedRoles, Collection<GrantedAuthority> granted) {
         Set<GrantedAuthority> target = new HashSet<GrantedAuthority>();
 
-        for (Iterator<String> iterator = grantedRoles.iterator(); iterator.hasNext();) {
-            String role = iterator.next();
-
-            for (Iterator<GrantedAuthority> grantedIterator = granted.iterator(); grantedIterator.hasNext();) {
-                GrantedAuthority authority = grantedIterator.next();
-
+        for (String role : grantedRoles) {
+            for (GrantedAuthority authority : granted) {
                 if (authority.getAuthority().equals(role)) {
                     target.add(authority);
                     break;
