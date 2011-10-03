@@ -77,7 +77,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.AntUrlPathMatcher;
 
@@ -208,10 +208,7 @@ public class SecurityModule {
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildHttpSessionContextIntegrationFilter() throws Exception {
 
-        HttpSessionContextIntegrationFilter filter = new HttpSessionContextIntegrationFilter();
-        filter.setContextClass( SecurityContextImpl.class );
-        filter.setAllowSessionCreation( true );
-        filter.setForceEagerSessionCreation( false );
+        SecurityContextPersistenceFilter filter = new SecurityContextPersistenceFilter();
         filter.afterPropertiesSet();
         return new HttpServletRequestFilterWrapper( filter );
     }
