@@ -24,8 +24,8 @@
     </licenses>
 	
     <scm>
-        <connection>scm:svn:http://www.localhost.nu/svn/public/tapestry-spring-security</connection>
-        <url>http://www.localhost.nu/svn/public/tapestry-spring-security</url>
+        <connection>scm:git:https://github.com/lobbin/tapestry-spring-security.git</connection>
+        <url>https://github.com/lobbin/tapestry-spring-security</url>
     </scm>
 	
     <developers>
