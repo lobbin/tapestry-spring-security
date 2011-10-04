@@ -23,8 +23,8 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityMetadataSource;
 
 /**
- * Implementation of {@link MethodDefinitionSource} that simply casts security
- * object to the {@link ConfigAttributeDefinition}.
+ * Implementation of {@link SecurityMetadataSource} that simply casts security
+ * object to the {@link ConfigAttribute}.
  * 
  * @author Ivan Dubrov
  */
@@ -32,11 +32,11 @@ public class StaticDefinitionSource implements SecurityMetadataSource {
 
     /**
      * This implementation simply casts security object to the
-     * {@link ConfigAttributeDefinition}.
+     * {@link ConfigAttribute}.
      * 
      * @param object
      *            security object
-     * @return security object casted to {@link ConfigAttributeDefinition}.
+     * @return security object casted to {@link ConfigAttribute}.
      */
     public final List<ConfigAttribute> getAttributes(final Object object) {
         ConfigAttributeHolder attrHolder = (ConfigAttributeHolder) object;
