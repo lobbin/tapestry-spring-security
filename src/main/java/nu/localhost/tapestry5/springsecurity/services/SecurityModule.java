@@ -37,11 +37,8 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Value;
-import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
@@ -80,7 +77,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.AntUrlPathMatcher;
 
@@ -102,15 +99,14 @@ public class SecurityModule {
         binder.bind( PasswordEncoder.class, PlaintextPasswordEncoder.class ).withMarker( SpringSecurityServices.class );
     }
 
-    public static void contributeAlias(
+
+    @Contribute(value = ServiceOverride.class)
+    public static void setupApplicationServiceOverrides(
             @SpringSecurityServices SaltSourceService saltSource,
             @SpringSecurityServices UsernamePasswordAuthenticationFilter authenticationProcessingFilter,
-            Configuration<AliasContribution<?>> configuration ) {
-
-        configuration.add( AliasContribution.create( SaltSourceService.class, saltSource ) );
-        configuration.add( AliasContribution.create(
-                UsernamePasswordAuthenticationFilter.class,
-                authenticationProcessingFilter ) );
+            MappedConfiguration<Class, Object> configuration) {
+        configuration.add(SaltSourceService.class, saltSource);
+        configuration.add(UsernamePasswordAuthenticationFilter.class, authenticationProcessingFilter);
     }
 
     @Marker( SpringSecurityServices.class )
@@ -212,10 +208,7 @@ public class SecurityModule {
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildHttpSessionContextIntegrationFilter() throws Exception {
 
-        HttpSessionContextIntegrationFilter filter = new HttpSessionContextIntegrationFilter();
-        filter.setContextClass( SecurityContextImpl.class );
-        filter.setAllowSessionCreation( true );
-        filter.setForceEagerSessionCreation( false );
+        SecurityContextPersistenceFilter filter = new SecurityContextPersistenceFilter();
         filter.afterPropertiesSet();
         return new HttpServletRequestFilterWrapper( filter );
     }
@@ -227,7 +220,7 @@ public class SecurityModule {
             @Inject @Value( "${spring-security.check.url}" ) final String authUrl,
             @Inject @Value( "${spring-security.target.url}" ) final String targetUrl,
             @Inject @Value( "${spring-security.failure.url}" ) final String failureUrl,
-            @Inject @Value( "${spring-security.always.use.target.url}" ) final String alwaysUseTargetUrl ) throws Exception {
+            @Inject @Value( "${spring-security.always.use.target.url}" ) final String alwaysUseTargetUrl ) {
 
         UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
         filter.setAuthenticationManager( manager );
@@ -250,7 +243,7 @@ public class SecurityModule {
 
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildAuthenticationProcessingFilter(
-            final UsernamePasswordAuthenticationFilter filter ) throws Exception {
+            final UsernamePasswordAuthenticationFilter filter ) {
 
         return new HttpServletRequestFilterWrapper( filter );
     }
@@ -258,7 +251,7 @@ public class SecurityModule {
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildRememberMeProcessingFilter(
             @SpringSecurityServices final RememberMeServices rememberMe,
-            @SpringSecurityServices final AuthenticationManager authManager ) throws Exception {
+            @SpringSecurityServices final AuthenticationManager authManager ) {
 
         RememberMeAuthenticationFilter filter = new RememberMeAuthenticationFilter();
         filter.setRememberMeServices( rememberMe );
@@ -276,7 +269,7 @@ public class SecurityModule {
     @Marker( SpringSecurityServices.class )
     public static HttpServletRequestFilter buildAnonymousProcessingFilter(
             @Inject @Value( "${spring-security.anonymous.attribute}" ) final String anonymousAttr,
-            @Inject @Value( "${spring-security.anonymous.key}" ) final String anonymousKey ) throws Exception {
+            @Inject @Value( "${spring-security.anonymous.key}" ) final String anonymousKey ) {
 
         AnonymousAuthenticationFilter filter = new AnonymousAuthenticationFilter();
         filter.setKey( anonymousKey );
@@ -318,7 +311,7 @@ public class SecurityModule {
 
         cfg.add( "securityContextLogoutHandler", new SecurityContextLogoutHandler() );
         cfg.add( "rememberMeLogoutHandler", rememberMeLogoutHandler );
-        cfg.add( "tapestryLogoutHandler", new TapestryLogoutHandler( globals ) ,new String[0]);
+        cfg.add( "tapestryLogoutHandler", new TapestryLogoutHandler( globals ) );
     }
 
     @Marker( SpringSecurityServices.class )
@@ -417,7 +410,7 @@ public class SecurityModule {
 
     public static SpringSecurityExceptionTranslationFilter buildSpringSecurityExceptionFilter(
             final AuthenticationEntryPoint aep,
-            @Inject @Value( "${spring-security.accessDenied.url}" ) final String accessDeniedUrl ) throws Exception {
+            @Inject @Value( "${spring-security.accessDenied.url}" ) final String accessDeniedUrl ) {
 
         SpringSecurityExceptionTranslationFilter filter = new SpringSecurityExceptionTranslationFilter();
         filter.setAuthenticationEntryPoint( aep );

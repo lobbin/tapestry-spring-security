@@ -222,7 +222,7 @@ public class SpringSecurityExceptionTranslationFilter extends GenericFilterBean 
      */
     private static final class DefaultThrowableAnalyzer extends ThrowableAnalyzer {
         /**
-         * @see org.springframework.security.util.ThrowableAnalyzer#initExtractorMap()
+         * @see org.springframework.security.web.util.ThrowableAnalyzer#initExtractorMap()
          */
         protected void initExtractorMap() {
             super.initExtractorMap();
