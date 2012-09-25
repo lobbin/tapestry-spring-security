@@ -100,6 +100,13 @@
 		  <version>${spring-release-version}</version>
         </dependency>
 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-release-version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Servlets API -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -113,22 +120,29 @@
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
         </dependency>
-		
+
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${testng-release-version}</version>
-            <classifier>jdk15</classifier>
+            <version>${testng-version}</version>
             <scope>test</scope>
         </dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
-	
+
     <build>
         <finalName>tapestry5-springsecurity</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
@@ -138,6 +152,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <archive>
                         <compress>true</compress>
@@ -151,6 +166,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -162,6 +178,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -223,6 +240,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -309,6 +327,6 @@
 
         <spring-release-version>3.0.3.RELEASE</spring-release-version>
         <cobertura-plugin-version>2.1</cobertura-plugin-version>
-        <testng-release-version>5.1</testng-release-version>
+        <testng-version>6.0.1</testng-version>
     </properties>
 </project>
