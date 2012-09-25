@@ -24,7 +24,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
 
 /**
- * Render it's body depending whether the user is logged in or not.
+ * Render it's body depending whether the user is logged in or not.<br/>
+ * <i>Usage in tml:</i>
+ * 
+ * <pre>
+ * &lt;t:security.ifLoggedIn&gt;
+ *  &lt;td&gt;&lt;label&gt;${message:value-label}:&lt;/label&gt;&nbsp;${value}&lt;/td&gt;
+ * &lt;/t:security.ifLoggedIn&gt;
+ * </pre>
  * 
  * @author Robin Helgelin
  * @author Tapestry Project (doc comments)
@@ -47,9 +54,9 @@ public class IfLoggedIn {
     @Inject
     private RequestGlobals requestGlobals;
     
-    private boolean test() {
+    private boolean isLoggedIn() {
         Principal principal = requestGlobals.getHTTPServletRequest().getUserPrincipal();
-        return principal != null && principal.getName() != "";
+        return null != principal && null != principal.getName() && principal.getName().length() > 0;
     }
 
     /**
@@ -57,11 +64,10 @@ public class IfLoggedIn {
      * the test parameter is false, returns the else parameter (this may also be null).
      */
     Object beginRender() {
-        if (test() != negate) {
+        if (isLoggedIn() != negate) {
             return null;
-        } else {
-            return elseBlock;
         }
+        return elseBlock;
     }
 
     /**
@@ -69,11 +75,6 @@ public class IfLoggedIn {
      * not have a template or do any other rendering besides its body.
      */
     boolean beforeRenderBody() {
-        return test() != negate;
-    }
-
-    void setup(String role, boolean negate, Block elseBlock) {
-        this.negate = negate;
-        this.elseBlock = elseBlock;
+        return isLoggedIn() != negate;
     }
 }
