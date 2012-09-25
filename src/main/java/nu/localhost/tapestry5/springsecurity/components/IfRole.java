@@ -20,19 +20,25 @@ package nu.localhost.tapestry5.springsecurity.components;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Parameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 
 /**
- * Render it's body depending whether the user is in a specific role or not.
+ * Render it's body depending whether the user is in a specific role or not.<br/>
+ * <i>Usage in tml:</i>
+ * 
+ * <pre>
+ * &lt;t:security.ifRole ifAnyGranted="PERMISSION_MENU"&gt;
+ *  &lt;td&gt;&lt;label&gt;${message:value-label}:&lt;/label&gt;&nbsp;${value}&lt;/td&gt;
+ * &lt;/t:security.ifRole&gt;
+ * </pre>
  * 
  * @author Jonathan Barker
  * @author Robin Helgelin
@@ -44,7 +50,8 @@ public class IfRole {
      * If the logged in user matches this role, then the body of the IfRole component is rendered. If false, the body is
      * omitted.  This is retained for backward compatibility, and corresponds to a single entry in ifAnyGranted
      */
-    @Parameter(required = false, defaultPrefix = "literal", principal=true)
+    @Deprecated
+    @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL, principal = true)
     private String role;
 
     /**
@@ -52,13 +59,13 @@ public class IfRole {
      * following parameters. If none are supplied, the default behavior is to
      * permit access. Behavior should be self-explanatory.
      */
-    @Parameter(required = false, defaultPrefix = "literal")
+    @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
     private String ifAllGranted;
 
-    @Parameter(required = false, defaultPrefix = "literal")
+    @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
     private String ifAnyGranted;
 
-    @Parameter(required = false, defaultPrefix = "literal")
+    @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
     private String ifNotGranted;
 
     /**
@@ -78,19 +85,13 @@ public class IfRole {
     private boolean test;
 
     private Collection<GrantedAuthority> getPrincipalAuthorities() {
-        Authentication currentUser = null;
-        currentUser = SecurityContextHolder.getContext().getAuthentication();
+        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 
-        if (null == currentUser) {
-            return Collections.emptyList();
+        if (null == currentUser || null == currentUser.getAuthorities()) {
+            return Collections.<GrantedAuthority> emptyList();
         }
 
-        if ((null == currentUser.getAuthorities()) || (currentUser.getAuthorities().size() < 1)) {
-            return Collections.emptyList();
-        }
-
-        Collection<GrantedAuthority> granted = currentUser.getAuthorities();
-        return granted;
+        return currentUser.getAuthorities();
     }
 
     private Set<String> authoritiesToRoles(Collection<GrantedAuthority> c) {
@@ -109,20 +110,10 @@ public class IfRole {
         return target;
     }
 
-    private Set<GrantedAuthority> parseAuthoritiesString(String authorizationsString) {
-        final Set<GrantedAuthority> requiredAuthorities = new HashSet<GrantedAuthority>();
-        final String[] authorities = StringUtils.commaDelimitedListToStringArray(authorizationsString);
-
-        for (String authority : authorities) {
-            // Remove the role's whitespace characters without depending on JDK 1.4+
-            // Includes space, tab, new line, carriage return and form feed.
-            String role = StringUtils.replace(authority, " ", "");
-            role = StringUtils.replace(role, "\t", "");
-            role = StringUtils.replace(role, "\r", "");
-            role = StringUtils.replace(role, "\n", "");
-            role = StringUtils.replace(role, "\f", "");
-
-            requiredAuthorities.add(new GrantedAuthorityImpl(role));
+    private Collection<GrantedAuthority> parseAuthorities(String authorities) {
+        Collection<GrantedAuthority> requiredAuthorities = new HashSet<GrantedAuthority>();
+        for (String authority : authorities.split(",")) {
+            requiredAuthorities.add(new GrantedAuthorityImpl(authority.replaceAll(" |\t|\r|\n|\f", "")));
         }
 
         return requiredAuthorities;
@@ -166,7 +157,8 @@ public class IfRole {
      *         and <var>required</var>.
      * 
      */
-    private Set<GrantedAuthority> retainAll(final Collection<GrantedAuthority> granted, final Set<GrantedAuthority> required) {
+    private Set<GrantedAuthority> retainAll(Collection<GrantedAuthority> granted, Collection<GrantedAuthority> required)
+    {
         Set<String> grantedRoles = authoritiesToRoles(granted);
         Set<String> requiredRoles = authoritiesToRoles(required);
         grantedRoles.retainAll(requiredRoles);
@@ -201,40 +193,36 @@ public class IfRole {
      * the conditions are effectively AND'd 
      */
     private boolean checkPermission() {
-        if (((null == ifAllGranted) || "".equals(ifAllGranted))
-         && ((null == ifAnyGranted) || "".equals(ifAnyGranted))
+        if (((null == ifAllGranted) || 0 == ifAllGranted.length())
+            && ((null == ifAnyGranted) || 0 == ifAnyGranted.length())
          && ((null == role) || "".equals(role))
-         && ((null == ifNotGranted) || "".equals(ifNotGranted))) {
+            && ((null == ifNotGranted) || 0 == ifNotGranted.length())) {
             return false;
         }
 
-        final Collection<GrantedAuthority> granted = getPrincipalAuthorities();
+        Collection<GrantedAuthority> granted = getPrincipalAuthorities();
 
         if ((null != role) && !"".equals(role)) {
-            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(role));
+            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthorities(role));
             if (grantedCopy.isEmpty()) {
                 return false;
             }
         }
 
-        if ((null != ifNotGranted) && !"".equals(ifNotGranted)) {
-            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(ifNotGranted));
-
-            if (!grantedCopy.isEmpty()) {
+        if ((null != ifNotGranted) && 0 < ifNotGranted.length()) {
+            if (!retainAll(granted, parseAuthorities(ifNotGranted)).isEmpty()) {
                 return false;
             }
         }
 
-        if ((null != ifAllGranted) && !"".equals(ifAllGranted)) {
-            if (!granted.containsAll(parseAuthoritiesString(ifAllGranted))) {
+        if ((null != ifAllGranted) && 0 < ifAllGranted.length()) {
+            if (!granted.containsAll(parseAuthorities(ifAllGranted))) {
                 return false;
             }
         }
 
-        if ((null != ifAnyGranted) && !"".equals(ifAnyGranted)) {
-            Set<GrantedAuthority> grantedCopy = retainAll(granted, parseAuthoritiesString(ifAnyGranted));
-
-            if (grantedCopy.isEmpty()) {
+        if ((null != ifAnyGranted) && 0 < ifAnyGranted.length()) {
+            if (retainAll(granted, parseAuthorities(ifAnyGranted)).isEmpty()) {
                 return false;
             }
         }
