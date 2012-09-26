@@ -1,0 +1,14 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<body>
+    <h1>IfLoggedIn Component Test Page</h1>
+
+	Text<br/>
+	<form action="test" method="post">
+	    <input id="field" type="text" name="field" />
+	 <t:security.ifLoggedIn>
+	    <input id="protectedField" type="text" name="protectedField" />
+	 </t:security.ifLoggedIn>
+	    <input id="submit" type="submit" value="Submit" />
+    </form>
+</body>
+</html>

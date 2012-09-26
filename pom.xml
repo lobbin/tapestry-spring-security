@@ -61,13 +61,17 @@
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-core</artifactId>
             <version>${tapestry-release-version}</version>
-
         </dependency>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
             <artifactId>tapestry-ioc</artifactId>
             <version>${tapestry-release-version}</version>
-
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>tapestry-test</artifactId>
+            <version>${tapestry-release-version}</version>
+            <scope>test</scope>
         </dependency>
 		
 		<!-- Spring security -->
@@ -327,6 +331,6 @@
 
         <spring-release-version>3.0.3.RELEASE</spring-release-version>
         <cobertura-plugin-version>2.1</cobertura-plugin-version>
-        <testng-version>6.0.1</testng-version>
+        <testng-version>6.3.1</testng-version>
     </properties>
 </project>
