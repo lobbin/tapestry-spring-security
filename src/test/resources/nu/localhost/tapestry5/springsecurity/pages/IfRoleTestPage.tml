@@ -1,0 +1,20 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<body>
+    <h1>IfRole Component Test Page</h1>
+
+	Text<br/>
+	<form action="test" method="post">
+	    <input id="field" type="text" name="field" />
+	 <t:security.ifRole ifAnyGranted="permission,dummy">
+	    <input id="protectedFieldAny" type="text" name="protectedFieldAny" />
+	 </t:security.ifRole>
+	 <t:security.ifRole ifNotGranted="permission">
+	    <input id="protectedFieldNot" type="text" name="protectedFieldNot" />
+	 </t:security.ifRole>
+	 <t:security.ifRole ifAllGranted="permission,permission2">
+	    <input id="protectedFieldAll" type="text" name="protectedFieldAll" />
+	 </t:security.ifRole>
+	    <input id="submit" type="submit" value="Submit" />
+    </form>
+</body>
+</html>
