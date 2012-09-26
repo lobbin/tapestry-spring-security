@@ -10,6 +10,7 @@ import org.apache.tapestry5.Block;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -22,21 +23,23 @@ public class IfRoleTest
     private IfRole victim;
 
     @BeforeMethod
-    public void setUp()
-    {
+    public void setUp() {
         victim = new IfRole();
     }
 
+    @AfterMethod
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
-    public void beforeRenderBodyNone()
-    {
+    public void beforeRenderBodyNone() {
         victim.setupRender();
         assertFalse(victim.beforeRenderBody());
     }
 
     @Test
-    public void beforeRenderBodyIfAllGrantedNot()
-    {
+    public void beforeRenderBodyIfAllGrantedNot() {
         ReflectionTestUtils.setField(victim, "ifAllGranted", PERMISSION);
         SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null));
         victim.setupRender();
@@ -44,8 +47,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beforeRenderBodyIfAllGranted()
-    {
+    public void beforeRenderBodyIfAllGranted() {
         ReflectionTestUtils.setField(victim, "ifAllGranted", PERMISSION + "  \r," + PERMISSION_2);
         SecurityContextHolder.getContext().setAuthentication(
             new TestingAuthenticationToken(USER, null, PERMISSION, PERMISSION_2));
@@ -54,8 +56,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beforeRenderBodyIfAnyGrantedNot()
-    {
+    public void beforeRenderBodyIfAnyGrantedNot() {
         ReflectionTestUtils.setField(victim, "ifAnyGranted", PERMISSION + "," + PERMISSION_2);
         SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null));
         victim.setupRender();
@@ -63,8 +64,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beforeRenderBodyIfAnyGranted()
-    {
+    public void beforeRenderBodyIfAnyGranted() {
         ReflectionTestUtils.setField(victim, "ifAnyGranted", PERMISSION + ", \t" + PERMISSION_2);
         SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null, PERMISSION));
         victim.setupRender();
@@ -72,8 +72,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beforeRenderBodyIfNotGrantedNot()
-    {
+    public void beforeRenderBodyIfNotGrantedNot() {
         ReflectionTestUtils.setField(victim, "ifNotGranted", PERMISSION + "," + PERMISSION_2);
         SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null, PERMISSION));
         victim.setupRender();
@@ -81,8 +80,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beforeRenderBodyIfNotGranted()
-    {
+    public void beforeRenderBodyIfNotGranted() {
         ReflectionTestUtils.setField(victim, "ifNotGranted", PERMISSION + "," + PERMISSION_2);
         SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null));
         victim.setupRender();
@@ -90,8 +88,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beginRender()
-    {
+    public void beginRender() {
         Block block = mock(Block.class);
         ReflectionTestUtils.setField(victim, "elseBlock", block);
         ReflectionTestUtils.setField(victim, "ifAnyGranted", PERMISSION);
@@ -101,8 +98,7 @@ public class IfRoleTest
     }
 
     @Test
-    public void beginRenderElse()
-    {
+    public void beginRenderElse() {
         Block block = mock(Block.class);
         ReflectionTestUtils.setField(victim, "elseBlock", block);
         victim.setupRender();

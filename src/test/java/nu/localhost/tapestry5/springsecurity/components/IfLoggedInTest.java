@@ -15,8 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class IfLoggedInTest
-{
+public class IfLoggedInTest {
     private static final String USER = "user";
 
     private IfLoggedIn victim;
@@ -25,8 +24,7 @@ public class IfLoggedInTest
     private MockHttpServletRequest httpServletRequest;
 
     @BeforeMethod
-    public void setUp()
-    {
+    public void setUp() {
         victim = new IfLoggedIn();
         requestGlobals = new RequestGlobalsImpl();
         httpServletRequest = new MockHttpServletRequest();
@@ -35,21 +33,18 @@ public class IfLoggedInTest
     }
 
     @Test
-    public void beforeRenderBodyNoPrincipal()
-    {
+    public void beforeRenderBodyNoPrincipal() {
         assertFalse(victim.beforeRenderBody());
     }
 
     @Test
-    public void beforeRenderBody()
-    {
+    public void beforeRenderBody() {
         httpServletRequest.setUserPrincipal(new TestingAuthenticationToken(USER, null));
         assertTrue(victim.beforeRenderBody());
     }
 
     @Test
-    public void beginRender()
-    {
+    public void beginRender() {
         Block block = mock(Block.class);
         ReflectionTestUtils.setField(victim, "elseBlock", block);
         httpServletRequest.setUserPrincipal(new TestingAuthenticationToken(USER, null));
@@ -57,8 +52,7 @@ public class IfLoggedInTest
     }
 
     @Test
-    public void beginRenderElse()
-    {
+    public void beginRenderElse() {
         Block block = mock(Block.class);
         ReflectionTestUtils.setField(victim, "elseBlock", block);
         assertEquals(victim.beginRender(), block);
