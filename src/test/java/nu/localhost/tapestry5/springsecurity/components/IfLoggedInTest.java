@@ -15,6 +15,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+/**
+ * Tests for IfLoggedIn component.
+ * 
+ * @author ferengra
+ */
 public class IfLoggedInTest {
     private static final String USER = "user";
 

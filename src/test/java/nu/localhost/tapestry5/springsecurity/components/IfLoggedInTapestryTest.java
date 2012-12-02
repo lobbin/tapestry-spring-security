@@ -8,6 +8,11 @@ import org.apache.tapestry5.test.PageTester;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Tests for IfLoggedIn component with Tapestry.
+ * 
+ * @author ferengra
+ */
 public class IfLoggedInTapestryTest
 {
     private static final String FIELD = "protectedField";
