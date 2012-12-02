@@ -12,6 +12,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Tests for IfRole component with Tapestry.
+ * 
+ * @author ferengra
+ */
 public class IfRoleTapestryTest
 {
     private static final String FIELD_ANY = "protectedFieldAny";

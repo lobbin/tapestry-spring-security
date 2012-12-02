@@ -32,7 +32,9 @@ import nu.localhost.tapestry5.springsecurity.services.internal.SpringSecurityWor
 import nu.localhost.tapestry5.springsecurity.services.internal.StaticSecurityChecker;
 import nu.localhost.tapestry5.springsecurity.services.internal.T5AccessDeniedHandler;
 import nu.localhost.tapestry5.springsecurity.services.internal.TapestryLogoutHandler;
+import nu.localhost.tapestry5.springsecurity.validator.PermissionValidator;
 
+import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -44,6 +46,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.RequestFilter;
@@ -442,5 +445,10 @@ public class SecurityModule {
     // configuration
     public static void contributeComponentClassResolver( final Configuration<LibraryMapping> configuration ) {
         configuration.add(new LibraryMapping(MODULE_NAME, "nu.localhost.tapestry5.springsecurity"));
+    }
+
+    @Contribute(FieldValidatorSource.class)
+    public static void addValidators(MappedConfiguration<String, Validator> configuration) {
+        configuration.add(PermissionValidator.NAME, new PermissionValidator());
     }
 }

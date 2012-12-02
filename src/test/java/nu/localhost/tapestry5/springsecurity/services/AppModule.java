@@ -2,10 +2,15 @@ package nu.localhost.tapestry5.springsecurity.services;
 
 import java.io.IOException;
 
+import nu.localhost.tapestry5.springsecurity.validator.PermissionValidator;
+
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
@@ -15,6 +20,11 @@ import org.apache.tapestry5.services.Response;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+/**
+ * Module for setting Tapestry environment for tests.
+ * 
+ * @author ferengra
+ */
 public class AppModule {
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration) {
@@ -35,5 +45,11 @@ public class AppModule {
             }
         };
         config.add("EnsureNonNullHttpRequestAndResponse", filter, "before:*");
+    }
+
+    @Contribute(FieldValidatorSource.class)
+    public static void addValidators(MappedConfiguration<String, Validator> configuration)
+    {
+        configuration.add(PermissionValidator.NAME, new PermissionValidator());
     }
 }
