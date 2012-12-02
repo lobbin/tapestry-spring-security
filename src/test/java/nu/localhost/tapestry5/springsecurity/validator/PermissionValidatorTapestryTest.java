@@ -50,7 +50,6 @@ public class PermissionValidatorTapestryTest {
 
     @Test
     public void notSubmitted() {
-        SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(USER, null, PERMISSION));
         Document document = pageTester.renderPage(PermissionValidatorTestPage.class.getSimpleName());
         Element element = document.getElementById(PROTECTED_FIELD);
         assertNotNull(element);
