@@ -87,7 +87,8 @@ public class IfRole {
     private Collection<GrantedAuthority> getPrincipalAuthorities() {
         Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 
-        if (null == currentUser || null == currentUser.getAuthorities()) {
+        if (null == currentUser)
+        {
             return Collections.<GrantedAuthority> emptyList();
         }
 
