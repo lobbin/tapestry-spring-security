@@ -1,0 +1,14 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<body>
+    <h1>PermissionValidator Test Page</h1>
+
+	Text<br/>
+	<div t:id="form">
+		<t:errors />
+	    <input t:id="field" />
+	    <input t:id="protectedField" />
+	    <input t:id="protectedListField" />
+	    <a t:id="submit">Submit</a>
+    </div>
+</body>
+</html>
