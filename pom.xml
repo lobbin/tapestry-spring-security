@@ -271,7 +271,7 @@
     <repositories>
         <repository>
             <id>tapestry.snapshots</id>
-            <url>http://tapestry.formos.com/maven-snapshot-repository</url>
+            <url>https://tapestry.formos.com/maven-snapshot-repository</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -283,14 +283,14 @@
         <repository>
             <id>spring-milestone</id>
             <name>Spring Portfolio Milestone Repository</name>
-            <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+            <url>https://s3.amazonaws.com/maven.springframework.org/milestone</url>
         </repository>
     </repositories>
   
     <pluginRepositories>
         <pluginRepository>
             <id>tapestry.snapshots</id>
-            <url>http://tapestry.formos.com/maven-snapshot-repository</url>
+            <url>https://tapestry.formos.com/maven-snapshot-repository</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -300,7 +300,7 @@
         </pluginRepository>
         <pluginRepository>
             <id>codehaus.snapshots</id>
-            <url>http://snapshots.repository.codehaus.org</url>
+            <url>https://snapshots.repository.codehaus.org</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -317,11 +317,11 @@
         </site>
         <repository>
             <id>tapestry.spring.security</id>
-            <url>ftp://surr.localhost.nu/www.localhost.nu/java/mvn</url>
+            <url>ftps://surr.localhost.nu/www.localhost.nu/java/mvn</url>
         </repository>
         <snapshotRepository>
             <id>tapestry.spring.security.snapshot</id>
-            <url>ftp://surr.localhost.nu/www.localhost.nu/java/mvn-snapshot</url>
+            <url>ftps://surr.localhost.nu/www.localhost.nu/java/mvn-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 
